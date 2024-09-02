@@ -1,6 +1,9 @@
 import { fetchMetadata } from "frames.js/next";
 import { Metadata } from "next";
 
+import Navbar from "@/components/navbar";
+import Dashboard from "@/components/dashboard";
+
 export async function generateMetadata(): Promise<Metadata> {
   return {
     title: "Open Frames Next.js Example",
@@ -18,5 +21,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Home() {
-  return <div>Open Frames Next.js Example</div>;
+  return (
+    <div className="">
+      <Navbar />
+      <Dashboard />
+    </div>
+  );
 }
