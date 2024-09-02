@@ -1,5 +1,5 @@
 import { Button } from "frames.js/next";
-import { frames } from "@/app/frames/frames";
+import { frames } from "./frames";
 
 const handleRequest = frames(async (ctx) => {
   return {
@@ -10,14 +10,10 @@ const handleRequest = frames(async (ctx) => {
           flexDirection: "column",
         }}
       >
-        <h1>1 in 1 Million</h1>
-        <h2>Rock Paper Scissors</h2>
-        Let the game begin!
+        Open Frames - Frames.js Starter
       </div>
     ),
-    imageOptions: {
-      aspectRatio: "1:1",
-    },
+    textInput: "Type something here",
     buttons: [
       <Button
         action="link"
@@ -25,13 +21,13 @@ const handleRequest = frames(async (ctx) => {
           "https://github.com/builders-garden/open-frames-starter-framesjs"
         }
       >
-        Check the Pool
+        Link
       </Button>,
-      <Button action="post" target={"/leaderboard"}>
-        Leaderboard
+      <Button action="post" target={"/post"}>
+        Post
       </Button>,
-      <Button action="post" target={"/play"}>
-        Play
+      <Button action="tx" target={"/tx"} post_url={"/tx/success"}>
+        Tx
       </Button>,
     ],
   };
