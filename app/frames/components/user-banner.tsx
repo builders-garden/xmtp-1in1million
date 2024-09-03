@@ -14,7 +14,7 @@ const UserBanner = ({ user }: UserBannerProps) => {
       />
       <p
         tw="h-[48px] text-[38px]  m-0 p-0 ml-[20px]"
-        style={{ fontFamily: "Outfit-Bold" }}
+        style={{ fontFamily: "Inter-Bold" }}
       >
         {user.username && user.username?.length > 14
           ? `${user.username.slice(0, 10)}...`

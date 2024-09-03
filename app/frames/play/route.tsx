@@ -22,6 +22,7 @@ const handleRequest = frames(async (ctx) => {
     const user: UserDataReturnType = await getUserDataForFid({
       fid: ctx.message?.requesterFid,
     });
+    console.log("User:", user);
 
     const move = ctx.url.searchParams.get("move");
 
