@@ -7,7 +7,7 @@ const handleRequest = frames(async (ctx) => {
   try {
     if (!ctx.message?.requesterFid) {
       return {
-        image: <div tw="w-full h-full flex bg-[#c9c9c9] px-4">No FID</div>,
+        image: <div tw="w-full h-full flex bg-white px-4">No FID</div>,
         imageOptions: {
           aspectRatio: "1:1",
         },
@@ -25,7 +25,7 @@ const handleRequest = frames(async (ctx) => {
 
     return {
       image: (
-        <div tw="w-full h-full flex bg-[#c9c9c9] px-4">
+        <div tw="w-full h-full flex bg-white px-4">
           <UserBanner user={user} />
           <WinsCounter count={0} />
           <div tw="flex flex-col items-center w-full mt-[200px]">
@@ -60,7 +60,7 @@ const handleRequest = frames(async (ctx) => {
   } catch (error) {
     console.error(error);
     return {
-      image: <div tw="w-full h-full flex bg-[#c9c9c9] px-4">Generic error</div>,
+      image: <div tw="w-full h-full flex bg-white px-4">Generic error</div>,
       imageOptions: {
         aspectRatio: "1:1",
       },

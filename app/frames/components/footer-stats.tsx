@@ -1,5 +1,3 @@
-import { UserDataReturnType } from "frames.js";
-
 interface FooterStatsProps {
   perc_winning: number;
   wins_to_next_reward: number;

@@ -1,12 +1,12 @@
 import { Button } from "frames.js/next";
 import { frames } from "@/app/frames/frames";
 import { getUserDataForFid, UserDataReturnType } from "frames.js";
-import { UserBanner } from "../components";
+import { Leaderboard, LeaderboardRow, UserBanner } from "../components";
 
 const handleRequest = frames(async (ctx) => {
   if (!ctx.message?.requesterFid) {
     return {
-      image: <div tw="w-full h-full flex bg-[#c9c9c9] px-4">No FID</div>,
+      image: <div tw="w-full h-full flex bg-white px-4">No FID</div>,
       imageOptions: {
         aspectRatio: "1:1",
       },
@@ -40,7 +40,7 @@ const handleRequest = frames(async (ctx) => {
 
   return {
     image: (
-      <div tw="w-full h-full flex bg-[#c9c9c9] px-4">
+      <div tw="w-full h-full flex bg-white px-4">
         <UserBanner user={user} />
         <div tw="flex flex-col items-center w-full mt-[200px]">
           <h1
@@ -51,71 +51,7 @@ const handleRequest = frames(async (ctx) => {
           >
             Leaderboard 🏆
           </h1>
-          <div tw="flex flex-col justify-center w-full bg-[#565656] rounded-3xl p-[30px] text-white">
-            <div
-              style={{
-                fontFamily: "Inter-Bold",
-              }}
-              tw="flex justify-between text-[38px]"
-            >
-              <p tw="h-[48px] w-[400px] m-0 p-0">User</p>
-              <p
-                style={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                }}
-                tw="h-[48px] w-[250px] m-0 p-0"
-              >
-                Wins
-              </p>
-              <p
-                style={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                }}
-                tw="h-[48px] w-[250px] m-0 p-0"
-              >
-                Best Round
-              </p>
-            </div>
-            {leaderboardUsers.map((user, index) => (
-              <div tw="flex justify-between w-full my-4" key={index}>
-                <p
-                  tw="h-[78px] w-[400px] text-[38px] items-center m-0 p-0"
-                  style={{ fontFamily: "Inter-Bold" }}
-                >
-                  <img
-                    src={`${user.profileImage || ""}`}
-                    alt={`${user.displayName} profile image`}
-                    tw="w-[78px] h-[78px] rounded-full"
-                  />
-                  <span tw="ml-4">
-                    {user.username && user.username?.length > 14
-                      ? `${user.username.slice(0, 10)}...`
-                      : user.username}
-                  </span>
-                </p>
-                <p
-                  style={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                  }}
-                  tw="h-[78px] w-[250px] text-[38px] items-center m-0 p-0"
-                >
-                  {user.wins}
-                </p>
-                <p
-                  style={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                  }}
-                  tw="h-[78px] w-[250px] text-[38px] items-center m-0 p-0"
-                >
-                  {user.bestRound}
-                </p>
-              </div>
-            ))}
-          </div>
+          <Leaderboard leaderboardUsers={leaderboardUsers} />
         </div>
       </div>
     ),
@@ -132,7 +68,7 @@ const handleRequest = frames(async (ctx) => {
         Check the Pool
       </Button>,
       <Button action="post" target={"/"}>
-        Back
+        Home
       </Button>,
       <Button action="post" target={"/play"}>
         Play
