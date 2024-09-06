@@ -6,7 +6,7 @@ import Dashboard from "@/components/dashboard";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: "Open Frames Next.js Example",
+    title: "Milionario - 1 in 1 Million",
     other: {
       ...(await fetchMetadata(
         new URL(

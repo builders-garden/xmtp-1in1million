@@ -1,4 +1,5 @@
 import { farcasterHubContext, openframes } from "frames.js/middleware";
+import { imagesWorkerMiddleware } from "frames.js/middleware/images-worker";
 import { createFrames } from "frames.js/next";
 import { isXmtpFrameActionPayload, getXmtpFrameMessage } from "frames.js/xmtp";
 
@@ -40,6 +41,10 @@ export const frames = createFrames<State>({
           return { ...result };
         },
       },
+    }),
+    imagesWorkerMiddleware({
+      imagesRoute: "/images",
+      secret: "MY_VERY_SECRET_SECRET",
     }),
   ],
 });
