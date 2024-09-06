@@ -41,7 +41,8 @@ export const POST = frames(async (ctx) => {
       abi: CONTRACT_ABI as Abi,
       to: CONTRACT_ADDRESS,
       data: calldata,
-      value: parseEther("0.0001").toString(),
+      // value: parseEther("0.0001").toString(),
+      value: "0",
     },
   });
 });

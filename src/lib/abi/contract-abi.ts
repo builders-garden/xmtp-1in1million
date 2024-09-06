@@ -171,6 +171,37 @@ export const CONTRACT_ABI = [
     type: "event",
   },
   {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "enum MilionarioManager.Move",
+        name: "contractMove",
+        type: "uint8",
+      },
+      {
+        indexed: false,
+        internalType: "bool",
+        name: "stepResult",
+        type: "bool",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "playerReward",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint64",
+        name: "gameId",
+        type: "uint64",
+      },
+    ],
+    name: "StepCreated",
+    type: "event",
+  },
+  {
     inputs: [
       {
         internalType: "int64",
@@ -184,28 +215,7 @@ export const CONTRACT_ABI = [
       },
     ],
     name: "submitMove",
-    outputs: [
-      {
-        internalType: "enum MilionarioManager.Move",
-        name: "contractMove",
-        type: "uint8",
-      },
-      {
-        internalType: "bool",
-        name: "stepResult",
-        type: "bool",
-      },
-      {
-        internalType: "uint256",
-        name: "requestId",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "playerReward",
-        type: "uint256",
-      },
-    ],
+    outputs: [],
     stateMutability: "payable",
     type: "function",
   },
@@ -546,6 +556,30 @@ export const CONTRACT_ABI = [
         internalType: "uint256[]",
         name: "randomWords",
         type: "uint256[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "player",
+        type: "address",
+      },
+    ],
+    name: "getSubmitMoveParams",
+    outputs: [
+      {
+        internalType: "int64",
+        name: "gameId",
+        type: "int64",
+      },
+      {
+        internalType: "uint256",
+        name: "requiredPayment",
+        type: "uint256",
       },
     ],
     stateMutability: "view",

@@ -7,7 +7,7 @@ import {
   UserBanner,
   StreakCounter,
 } from "../components";
-import { getTransactionReceipt } from "@/lib/transaction";
+import { getSubmitMoveParams, getTransactionReceipt } from "@/lib/transaction";
 
 const availableMoves = [
   {
@@ -40,37 +40,110 @@ const handleRequest = frames(async (ctx) => {
       };
     }
 
+    const user: UserDataReturnType = await getUserDataForFid({
+      fid: ctx.message?.requesterFid,
+    });
+    console.log("User:", user);
+    const userAddress = await ctx.walletAddress();
+    if (!userAddress) {
+      return {
+        image: (
+          <div tw="w-full h-full flex bg-white px-4">No wallet address</div>
+        ),
+        imageOptions: {
+          aspectRatio: "1:1",
+        },
+        buttons: [
+          <Button action="post" target={"/"}>
+            Back
+          </Button>,
+        ],
+      };
+    }
+    const gameParams = await getSubmitMoveParams(userAddress);
+    console.log("User address:", userAddress);
+    console.log("Game params:", gameParams);
+    const move = ctx.url.searchParams.get("move");
+    const step = ctx.url.searchParams.get("step") || "0";
+    const game = ctx.url.searchParams.get("game") || "-1";
+    const tx = ctx.url.searchParams.get("tx") || undefined;
+    console.log("Move:", move, "Step:", step, "Game:", game);
+    let result: "win" | "lose" | "draw" | undefined = undefined;
+    let randomMove: string | undefined = undefined;
+
+    const transactionId: `0x${string}` = (tx ||
+      ctx.message.transactionId) as `0x${string}`;
     let transactionReceipt: any = undefined;
-    if (ctx.message.transactionId) {
+    if (transactionId) {
+      console.log("getting information of transaction with id:", transactionId);
       try {
-        transactionReceipt = await getTransactionReceipt(
-          ctx.message.transactionId
-        );
+        transactionReceipt = await getTransactionReceipt(transactionId);
       } catch (e) {
         console.error(e);
       }
 
+      console.log("Transaction receipt:", transactionReceipt);
+
       let status = "";
       if (!transactionReceipt) {
         status = "Loading...";
+
+        return {
+          image: (
+            <div
+              style={{
+                fontFamily: "BRSonoma-Regular",
+              }}
+              tw="w-full h-full flex bg-white px-4"
+            >
+              <UserBanner user={user} />
+              <StreakCounter count={Number(step)} />
+
+              <div tw="flex flex-col items-center w-full mt-[200px]">
+                <div tw="flex flex-col items-center w-full">
+                  <h1
+                    tw="text-[150px] text-center"
+                    style={{
+                      fontFamily: "BagelFatOne-Regular",
+                    }}
+                  >
+                    Loading...
+                  </h1>
+                  <div tw="flex flex-col justify-center items-center mt-4 w-full">
+                    <p tw="text-[40px] text-center my-2">
+                      Sepolia is generiting a random move... 🎲
+                    </p>
+                    <p tw="text-[40px] text-center my-2">
+                      Cross your fingers and wait for the result! 🤞
+                    </p>
+                  </div>
+                </div>
+                <FooterStats perc_winning={14.56} wins_to_next_reward={6} />
+              </div>
+            </div>
+          ),
+          imageOptions: {
+            aspectRatio: "1:1",
+          },
+          buttons: [
+            <Button action="post" key="1" target={"/"}>
+              Back
+            </Button>,
+            <Button
+              action="post"
+              key="3"
+              target={`/play?move=${move}&step=${step}&tx=${ctx.message.transactionId}`}
+            >
+              Refresh 🔄
+            </Button>,
+          ],
+        };
       } else if (transactionReceipt.status === "success") {
         status = "Transaction Successful";
       } else if (transactionReceipt.status === "reverted") {
         status = "Transaction Failed";
       }
     }
-
-    console.log("Transaction receipt:", transactionReceipt);
-
-    const user: UserDataReturnType = await getUserDataForFid({
-      fid: ctx.message?.requesterFid,
-    });
-    console.log("User:", user);
-
-    const move = ctx.url.searchParams.get("move");
-    const step = ctx.url.searchParams.get("step");
-    let result: "win" | "lose" | "draw" | undefined = undefined;
-    let randomMove: string | undefined = undefined;
 
     if (move) {
       console.log("User move:", move);
@@ -101,7 +174,7 @@ const handleRequest = frames(async (ctx) => {
           tw="w-full h-full flex bg-white px-4"
         >
           <UserBanner user={user} />
-          <StreakCounter count={0} />
+          <StreakCounter count={Number(step)} />
           {/* here I would like to create an UI with the title "Choose your move" and below three boxes with the available moves (rock, paper, scissors).
           then a counter with the number of plays that returned a positive result and the UserBanner taken from ./components.
           The page isn't dynamic, so I don't want buttons but only boxes showing user the moves */}
@@ -173,8 +246,8 @@ const handleRequest = frames(async (ctx) => {
           <Button
             action="tx"
             key="2"
-            target={"/tx/move?move=rock"}
-            post_url={"/play?move=rock&step=1"}
+            target={`/tx/move?move=rock&step=${step}&game=${game}`}
+            post_url={`/play?move=rock&step=${step + 1}&game=${game}`}
           >
             Rock 🪨
           </Button>
@@ -183,8 +256,8 @@ const handleRequest = frames(async (ctx) => {
           <Button
             action="tx"
             key="3"
-            target={"/tx/move?move=paper"}
-            post_url={"/play?move=paper&step=1"}
+            target={`/tx/move?move=paper&step=${step}&game=${game}`}
+            post_url={`/play?move=paper&step=${step + 1}&game=${game}`}
           >
             Paper 📜
           </Button>
@@ -193,8 +266,8 @@ const handleRequest = frames(async (ctx) => {
           <Button
             action="tx"
             key="4"
-            target={"/tx/move?move=scissors"}
-            post_url={"/play?move=scissors&step=1"}
+            target={`/tx/move?move=scissors&step=${step}&game=${game}`}
+            post_url={`/play?move=scissors&step=${step + 1}&game=${game}`}
           >
             Scissors ✂️
           </Button>

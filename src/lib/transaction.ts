@@ -7,7 +7,7 @@ const publicClient = createPublicClient({
   transport: http(),
 });
 
-export const CONTRACT_ADDRESS = "0xFa06c3aF06F7dA33720061C9B23082aEa38C3eFA";
+export const CONTRACT_ADDRESS = "0x8e75728829A2e74412CAAEcb82047A18AFAE32DB";
 
 enum Move {
   ROCK = "ROCK",
@@ -56,7 +56,7 @@ export interface PlayerMerged {
 
 export async function getTransactionReceipt(txHash: `0x${string}`) {
   // const publicClient = getPublicClient(chain);
-  publicClient.getTransactionReceipt({
+  return await publicClient.getTransactionReceipt({
     hash: txHash,
   });
 }
@@ -114,4 +114,26 @@ const getLeaderboard = async (): Promise<PlayerMerged[]> => {
   );
 };
 
-export { getGame, getAllGames, getAllPlayers, getLeaderboard };
+const getSubmitMoveParams = async (address: string): Promise<any> => {
+  const submitMoveParams = (await publicClient.readContract({
+    address: CONTRACT_ADDRESS,
+    abi: CONTRACT_ABI as Abi,
+    functionName: "getSubmitMoveParams",
+    args: [address],
+  })) as BigInt[];
+
+  return {
+    game: submitMoveParams[0],
+    amountToPay: submitMoveParams[1],
+    currentStep: submitMoveParams[2],
+    availableGames: submitMoveParams[3],
+  };
+};
+
+export {
+  getGame,
+  getAllGames,
+  getAllPlayers,
+  getLeaderboard,
+  getSubmitMoveParams,
+};
