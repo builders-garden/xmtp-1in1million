@@ -36,12 +36,7 @@ const handleRequest = frames(async (ctx) => {
       aspectRatio: "1:1",
     },
     buttons: [
-      <Button
-        action="link"
-        target={
-          "https://github.com/builders-garden/open-frames-starter-framesjs"
-        }
-      >
+      <Button action="link" target={"https://a-milly.vercel.app"}>
         Check the Pool
       </Button>,
       <Button action="post" target={"/leaderboard"}>
