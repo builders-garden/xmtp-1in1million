@@ -1,7 +1,12 @@
 import { Button } from "frames.js/next";
 import { frames } from "@/app/frames/frames";
 import { getUserDataForFid, UserDataReturnType } from "frames.js";
-import { FooterStats, GameMove, UserBanner, WinsCounter } from "../components";
+import {
+  FooterStats,
+  GameMove,
+  UserBanner,
+  StreakCounter,
+} from "../components";
 
 const availableMoves = [
   {
@@ -65,9 +70,14 @@ const handleRequest = frames(async (ctx) => {
 
     return {
       image: (
-        <div tw="w-full h-full flex bg-white px-4">
+        <div
+          style={{
+            fontFamily: "BRSonoma-Regular",
+          }}
+          tw="w-full h-full flex bg-white px-4"
+        >
           <UserBanner user={user} />
-          <WinsCounter count={0} />
+          <StreakCounter count={0} />
           {/* here I would like to create an UI with the title "Choose your move" and below three boxes with the available moves (rock, paper, scissors).
           then a counter with the number of plays that returned a positive result and the UserBanner taken from ./components.
           The page isn't dynamic, so I don't want buttons but only boxes showing user the moves */}
@@ -109,7 +119,14 @@ const handleRequest = frames(async (ctx) => {
               </div>
             ) : (
               <div tw="flex flex-col items-center w-full">
-                <h1 tw="text-6xl text-center">Choose your move</h1>
+                <h1
+                  style={{
+                    fontFamily: "BagelFatOne-Regular",
+                  }}
+                  tw="text-[90px] text-center"
+                >
+                  Choose your move
+                </h1>
                 <div tw="flex justify-center mt-4 w-full justify-between">
                   {availableMoves.map((move) => (
                     <GameMove icon={move.icon} text={move.text} />

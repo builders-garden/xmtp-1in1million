@@ -12,10 +12,22 @@ const boldFontData = fs.readFileSync(
   path.join(process.cwd(), "public/assets", "Inter-Bold.ttf")
 );
 
+const bagelFontData = fs.readFileSync(
+  path.join(process.cwd(), "public/assets", "BagelFatOne-Regular.ttf")
+);
+
+const sonomaFontData = fs.readFileSync(
+  path.join(process.cwd(), "public/assets", "BRSonoma-Regular.otf")
+);
+
+const sonomaBoldFontData = fs.readFileSync(
+  path.join(process.cwd(), "public/assets", "BRSonoma-Bold.otf")
+);
+
 const imagesWorker = createImagesWorker({
   secret: "MY_VERY_SECRET_SECRET",
   imageOptions: {
-    debug: true,
+    debug: false,
     sizes: {
       "1:1": {
         width: 1080,
@@ -34,6 +46,18 @@ const imagesWorker = createImagesWorker({
       {
         data: boldFontData,
         name: "Inter-Bold",
+      },
+      {
+        data: bagelFontData,
+        name: "BagelFatOne-Regular",
+      },
+      {
+        data: sonomaFontData,
+        name: "BRSonoma-Regular",
+      },
+      {
+        data: sonomaBoldFontData,
+        name: "BRSonoma-Bold",
       },
     ],
   },

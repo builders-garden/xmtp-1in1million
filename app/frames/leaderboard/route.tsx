@@ -31,7 +31,7 @@ const handleRequest = frames(async (ctx) => {
 
   for (let i = 0; i < 5; i++) {
     leaderboardUsers.push({
-      ...(await getUserDataForFid({ fid: i + 2 })),
+      ...(await getUserDataForFid({ fid: i + 10 })),
       // generate random wins and bestRound for each user in the leaderboard from 1 to 100
       wins: Math.floor(Math.random() * 100) + 1,
       bestRound: Math.floor(Math.random() * 100) + 1,
@@ -40,16 +40,21 @@ const handleRequest = frames(async (ctx) => {
 
   return {
     image: (
-      <div tw="w-full h-full flex bg-white px-4">
+      <div
+        style={{
+          fontFamily: "BRSonoma-Regular",
+        }}
+        tw="w-full h-full flex bg-white px-4"
+      >
         <UserBanner user={user} />
-        <div tw="flex flex-col items-center w-full mt-[200px]">
+        <div tw="flex flex-col items-center w-full mt-[100px]">
           <h1
             style={{
-              fontFamily: "Inter-Bold",
+              fontFamily: "BagelFatOne-Regular",
             }}
-            tw="text-6xl text-center"
+            tw="text-[90px] text-center"
           >
-            Leaderboard 🏆
+            Leaderboard
           </h1>
           <Leaderboard leaderboardUsers={leaderboardUsers} />
         </div>

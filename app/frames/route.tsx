@@ -8,11 +8,28 @@ const handleRequest = frames(async (ctx) => {
         style={{
           display: "flex",
           flexDirection: "column",
+          fontFamily: "BRSonoma-Regular",
         }}
+        tw="justify-center items-center"
       >
-        <h1>1 in 1 Million</h1>
-        <h2>Rock Paper Scissors</h2>
-        Let the game begin!
+        <h1
+          style={{
+            fontFamily: "BagelFatOne-Regular",
+          }}
+          tw="text-[160px] my-2"
+        >
+          Milionario
+        </h1>
+        <h2
+          style={{
+            fontFamily: "BagelFatOne-Regular",
+          }}
+          tw="text-[80px] mt-0 mb-8"
+        >
+          1 in 1 Million
+        </h2>
+        <p tw="text-[140px] my-2">🪨 📜 ✂️</p>
+        <p tw="text-[40px] my-2">Let the game begin!</p>
       </div>
     ),
     imageOptions: {

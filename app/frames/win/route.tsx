@@ -1,7 +1,7 @@
 import { Button } from "frames.js/next";
 import { frames } from "@/app/frames/frames";
 import { getUserDataForFid, UserDataReturnType } from "frames.js";
-import { FooterStats, UserBanner, WinsCounter } from "../components";
+import { FooterStats, UserBanner, StreakCounter } from "../components";
 
 const handleRequest = frames(async (ctx) => {
   try {
@@ -27,7 +27,7 @@ const handleRequest = frames(async (ctx) => {
       image: (
         <div tw="w-full h-full flex bg-white px-4">
           <UserBanner user={user} />
-          <WinsCounter count={0} />
+          <StreakCounter count={0} />
           <div tw="flex flex-col items-center w-full mt-[200px]">
             <h1 tw="text-6xl text-center">You Win</h1>
             <div tw="flex justify-center mt-4 w-full justify-between">

@@ -1,5 +1,5 @@
 export { UserBanner } from "./user-banner";
-export { WinsCounter } from "./wins-counter";
+export { StreakCounter } from "./streak-counter";
 export { FooterStats } from "./footer-stats";
 export { LeaderboardRow } from "./leaderboard-row";
 export { Leaderboard } from "./leaderboard";
