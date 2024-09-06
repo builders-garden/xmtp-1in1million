@@ -65,7 +65,9 @@ const getBalance = async (provider: IProvider): Promise<string> => {
 
     const address = await walletClient.getAddresses();
 
-    const balance = await publicClient.getBalance({ address: address[0] });
+    const balance = await publicClient.getBalance({
+      address: address[0]! as `0x${string}`,
+    });
     console.log(balance);
     return formatEther(balance);
   } catch (error) {
@@ -92,7 +94,7 @@ const sendTransaction = async (provider: IProvider): Promise<any> => {
 
     // Submit transaction to the blockchain
     const hash = await walletClient.sendTransaction({
-      account: address[0],
+      account: address[0]! as `0x${string}`,
       to: destination,
       value: amount,
     });
@@ -121,7 +123,7 @@ const signMessage = async (provider: IProvider): Promise<any> => {
 
     // Sign the message
     const hash = await walletClient.signMessage({
-      account: address[0],
+      account: address[0]! as `0x${string}`,
       message: originalMessage,
     });
 

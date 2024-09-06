@@ -2,6 +2,9 @@ import "dotenv/config";
 import { spawn } from "node:child_process";
 import isPortReachable from "is-port-reachable";
 
+/**
+ * @param {number} port
+ */
 async function getOpenPort(port) {
   const isReachable = await isPortReachable(port, { host: "localhost" });
 
