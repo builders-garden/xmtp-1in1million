@@ -1,4 +1,10 @@
-import { Abi, createPublicClient, http } from "viem";
+import {
+  Abi,
+  createPublicClient,
+  http,
+  parseEventLogs,
+  TransactionReceipt,
+} from "viem";
 import { CONTRACT_ABI } from "./abi/contract-abi";
 import { sepolia } from "viem/chains";
 
@@ -7,7 +13,7 @@ const publicClient = createPublicClient({
   transport: http(),
 });
 
-export const CONTRACT_ADDRESS = "0x3f5f87b75e549CAEEE59AC87Dc3E77e2223b5895";
+export const CONTRACT_ADDRESS = "0xBC32487413e6bff8fE784Eef74d4029f8033092c";
 
 enum Move {
   ROCK = "ROCK",
@@ -130,10 +136,19 @@ const getSubmitMoveParams = async (address: string) => {
   };
 };
 
+const readLogs = async (receipt: TransactionReceipt) => {
+  const logs = parseEventLogs({
+    abi: CONTRACT_ABI as Abi,
+    logs: receipt.logs,
+  });
+  return logs;
+};
+
 export {
   getGame,
   getAllGames,
   getAllPlayers,
   getLeaderboard,
   getSubmitMoveParams,
+  readLogs,
 };

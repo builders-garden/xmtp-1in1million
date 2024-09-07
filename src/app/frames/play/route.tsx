@@ -7,7 +7,12 @@ import {
   UserBanner,
   StreakCounter,
 } from "../components";
-import { getSubmitMoveParams, getTransactionReceipt } from "@/lib/transaction";
+import {
+  getSubmitMoveParams,
+  getTransactionReceipt,
+  readLogs,
+} from "@/lib/transaction";
+import { TransactionReceipt } from "viem";
 
 const availableMoves = [
   {
@@ -44,23 +49,23 @@ const handleRequest = frames(async (ctx) => {
       fid: ctx.message?.requesterFid,
     });
     console.log("User:", user);
-    const userAddress = await ctx.walletAddress();
-    if (!userAddress) {
-      return {
-        image: (
-          <div tw="w-full h-full flex bg-white px-4">No wallet address</div>
-        ),
-        imageOptions: {
-          aspectRatio: "1:1",
-        },
-        buttons: [
-          <Button action="post" target={"/"}>
-            Back
-          </Button>,
-        ],
-      };
-    }
-    // const userAddress = "0xAf22B0CE4B439769579A892457B9fC391bF1BC96";
+    // const userAddress = await ctx.walletAddress();
+    // if (!userAddress) {
+    //   return {
+    //     image: (
+    //       <div tw="w-full h-full flex bg-white px-4">No wallet address</div>
+    //     ),
+    //     imageOptions: {
+    //       aspectRatio: "1:1",
+    //     },
+    //     buttons: [
+    //       <Button action="post" target={"/"}>
+    //         Back
+    //       </Button>,
+    //     ],
+    //   };
+    // }
+    const userAddress = "0xAf22B0CE4B439769579A892457B9fC391bF1BC96";
     const gameParams = await getSubmitMoveParams(userAddress);
     console.log("User address:", userAddress);
     console.log("Game params:", gameParams);
@@ -70,12 +75,11 @@ const handleRequest = frames(async (ctx) => {
     const { gameId, requiredPayment, currentStep, remainingGames } = gameParams;
     const tx = ctx.url.searchParams.get("tx") || undefined;
     console.log("Move:", move, "Step:", currentStep, "Game:", gameId);
-    let result: "win" | "lose" | "draw" | undefined = undefined;
-    let randomMove: string | undefined = undefined;
 
     const transactionId: `0x${string}` = (tx ||
       ctx.message.transactionId) as `0x${string}`;
-    let transactionReceipt: any = undefined;
+    let transactionReceipt: TransactionReceipt | undefined = undefined;
+    let transactionArgs = undefined;
     if (transactionId) {
       console.log("getting information of transaction with id:", transactionId);
       try {
@@ -85,10 +89,20 @@ const handleRequest = frames(async (ctx) => {
       }
 
       console.log("Transaction receipt:", transactionReceipt);
-
-      let status = "";
-      if (!transactionReceipt) {
-        status = "Loading...";
+      if (transactionReceipt) {
+        if (transactionReceipt.status === "success") {
+          const transactionLogs = await readLogs(transactionReceipt);
+          transactionArgs = transactionLogs.map((log) => log.args);
+          console.log("transactionArgs:", transactionArgs);
+        } else if (transactionReceipt.status === "reverted") {
+          console.log("Transaction reverted");
+        }
+      } else {
+        console.log(
+          "No transaction found with id:",
+          transactionId,
+          " -> loading..."
+        );
 
         return {
           image: (
@@ -99,7 +113,7 @@ const handleRequest = frames(async (ctx) => {
               tw="w-full h-full flex bg-white px-4"
             >
               <UserBanner user={user} />
-              <StreakCounter count={Number(currentStep)} />
+              <StreakCounter count={Number(currentStep) - 1} />
 
               <div tw="flex flex-col items-center w-full mt-[200px]">
                 <div tw="flex flex-col items-center w-full">
@@ -120,7 +134,10 @@ const handleRequest = frames(async (ctx) => {
                     </p>
                   </div>
                 </div>
-                <FooterStats perc_winning={14.56} wins_to_next_reward={6} />
+                <FooterStats
+                  perc_winning={14.56}
+                  remaining_games={Number(remainingGames)}
+                />
               </div>
             </div>
           ),
@@ -134,32 +151,40 @@ const handleRequest = frames(async (ctx) => {
             <Button
               action="post"
               key="3"
-              target={`/play?move=${move}&currentStep=${currentStep}&tx=${ctx.message.transactionId}`}
+              target={`/play?move=${move}&tx=${transactionId}`}
             >
               Refresh 🔄
             </Button>,
           ],
         };
-      } else if (transactionReceipt.status === "success") {
-        status = "Transaction Successful";
-      } else if (transactionReceipt.status === "reverted") {
-        status = "Transaction Failed";
       }
     }
 
+    let result: "win" | "lose" | "draw" | undefined = undefined;
+    let contractMove: number | undefined = undefined;
+    let contractMoveConverted: string | undefined = undefined;
     if (move) {
       console.log("User move:", move);
-      const moves = ["rock", "paper", "scissors"];
-      randomMove = moves[Math.floor(Math.random() * moves.length)];
-      console.log("Random move:", randomMove);
+      contractMove = (transactionArgs?.[0] as any).contractMove;
+
+      console.log("Contract move (number):", contractMove);
+      // map contract move on rock, paper, scissors
+      if (contractMove === 0) {
+        contractMoveConverted = "rock";
+      } else if (contractMove === 1) {
+        contractMoveConverted = "paper";
+      } else if (contractMove === 2) {
+        contractMoveConverted = "scissors";
+      }
+      console.log("Contract move (converted):", contractMoveConverted);
 
       result = "lose";
-      if (move === randomMove) {
+      if (move === contractMoveConverted) {
         result = "draw";
       } else if (
-        (move === "rock" && randomMove === "scissors") ||
-        (move === "paper" && randomMove === "rock") ||
-        (move === "scissors" && randomMove === "paper")
+        (move === "rock" && contractMoveConverted === "scissors") ||
+        (move === "paper" && contractMoveConverted === "rock") ||
+        (move === "scissors" && contractMoveConverted === "paper")
       ) {
         result = "win";
       }
@@ -176,13 +201,13 @@ const handleRequest = frames(async (ctx) => {
           tw="w-full h-full flex bg-white px-4"
         >
           <UserBanner user={user} />
-          <StreakCounter count={Number(currentStep)} />
+          <StreakCounter count={Number(currentStep) - 1} />
           {/* here I would like to create an UI with the title "Choose your move" and below three boxes with the available moves (rock, paper, scissors).
           then a counter with the number of plays that returned a positive result and the UserBanner taken from ./components.
           The page isn't dynamic, so I don't want buttons but only boxes showing user the moves */}
 
           <div tw="flex flex-col items-center w-full mt-[200px]">
-            {move && result && randomMove ? (
+            {move && result && contractMoveConverted ? (
               <div tw="flex flex-col items-center w-full">
                 <h1 tw="text-6xl text-center">
                   {result === "win"
@@ -205,13 +230,13 @@ const handleRequest = frames(async (ctx) => {
                     Bot move
                     <GameMove
                       icon={
-                        randomMove === "rock"
+                        contractMoveConverted === "rock"
                           ? "🪨"
-                          : randomMove === "paper"
+                          : contractMoveConverted === "paper"
                             ? "📜"
                             : "✂️"
                       }
-                      text={randomMove}
+                      text={contractMoveConverted}
                     />
                   </div>
                 </div>
@@ -226,6 +251,14 @@ const handleRequest = frames(async (ctx) => {
                 >
                   Choose your move
                 </h1>
+                <h2
+                  style={{
+                    fontFamily: "BagelFatOne-Regular",
+                  }}
+                  tw="text-[40px] text-center my-2"
+                >
+                  Round {currentStep?.toString()}
+                </h2>
                 <div tw="flex justify-center mt-4 w-full justify-between">
                   {availableMoves.map((move) => (
                     <GameMove icon={move.icon} text={move.text} />
@@ -233,7 +266,10 @@ const handleRequest = frames(async (ctx) => {
                 </div>
               </div>
             )}
-            <FooterStats perc_winning={14.56} wins_to_next_reward={6} />
+            <FooterStats
+              perc_winning={14.56}
+              remaining_games={Number(remainingGames)}
+            />
           </div>
         </div>
       ),
@@ -244,7 +280,7 @@ const handleRequest = frames(async (ctx) => {
         <Button action="post" key="1" target={"/"}>
           Back
         </Button>,
-        !(move && result && randomMove) ? (
+        !move ? (
           <Button
             action="tx"
             key="2"
@@ -254,7 +290,7 @@ const handleRequest = frames(async (ctx) => {
             Rock 🪨
           </Button>
         ) : undefined,
-        !(move && result && randomMove) ? (
+        !move ? (
           <Button
             action="tx"
             key="3"
@@ -264,7 +300,7 @@ const handleRequest = frames(async (ctx) => {
             Paper 📜
           </Button>
         ) : undefined,
-        !(move && result && randomMove) ? (
+        !move ? (
           <Button
             action="tx"
             key="4"
@@ -274,14 +310,19 @@ const handleRequest = frames(async (ctx) => {
             Scissors ✂️
           </Button>
         ) : undefined,
-        move && result && randomMove ? (
+        move && result != "win" ? (
           <Button action="post" key="2" target={"/play"}>
-            Play again
+            Play again 🔄
           </Button>
         ) : undefined,
-        move && result && randomMove ? (
+        move && result != "win" ? (
           <Button action="post" key="3" target={"/leaderboard"}>
             Leaderboard
+          </Button>
+        ) : undefined,
+        move && result === "win" ? (
+          <Button action="post" key="2" target={"/play"}>
+            Next round 🎉
           </Button>
         ) : undefined,
       ],
