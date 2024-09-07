@@ -7,7 +7,7 @@ const publicClient = createPublicClient({
   transport: http(),
 });
 
-export const CONTRACT_ADDRESS = "0x8e75728829A2e74412CAAEcb82047A18AFAE32DB";
+export const CONTRACT_ADDRESS = "0x3f5f87b75e549CAEEE59AC87Dc3E77e2223b5895";
 
 enum Move {
   ROCK = "ROCK",
@@ -114,7 +114,7 @@ const getLeaderboard = async (): Promise<PlayerMerged[]> => {
   );
 };
 
-const getSubmitMoveParams = async (address: string): Promise<any> => {
+const getSubmitMoveParams = async (address: string) => {
   const submitMoveParams = (await publicClient.readContract({
     address: CONTRACT_ADDRESS,
     abi: CONTRACT_ABI as Abi,
@@ -123,10 +123,10 @@ const getSubmitMoveParams = async (address: string): Promise<any> => {
   })) as BigInt[];
 
   return {
-    game: submitMoveParams[0],
-    amountToPay: submitMoveParams[1],
+    gameId: submitMoveParams[0],
+    requiredPayment: submitMoveParams[1],
     currentStep: submitMoveParams[2],
-    availableGames: submitMoveParams[3],
+    remainingGames: submitMoveParams[3],
   };
 };
 

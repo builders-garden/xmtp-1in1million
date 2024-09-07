@@ -60,14 +60,16 @@ const handleRequest = frames(async (ctx) => {
         ],
       };
     }
+    // const userAddress = "0xAf22B0CE4B439769579A892457B9fC391bF1BC96";
     const gameParams = await getSubmitMoveParams(userAddress);
     console.log("User address:", userAddress);
     console.log("Game params:", gameParams);
     const move = ctx.url.searchParams.get("move");
-    const step = ctx.url.searchParams.get("step") || "0";
-    const game = ctx.url.searchParams.get("game") || "-1";
+    // const currentStep = ctx.url.searchParams.get("currentStep") || "0";
+    // const game = ctx.url.searchParams.get("game") || "-1";
+    const { gameId, requiredPayment, currentStep, remainingGames } = gameParams;
     const tx = ctx.url.searchParams.get("tx") || undefined;
-    console.log("Move:", move, "Step:", step, "Game:", game);
+    console.log("Move:", move, "Step:", currentStep, "Game:", gameId);
     let result: "win" | "lose" | "draw" | undefined = undefined;
     let randomMove: string | undefined = undefined;
 
@@ -97,7 +99,7 @@ const handleRequest = frames(async (ctx) => {
               tw="w-full h-full flex bg-white px-4"
             >
               <UserBanner user={user} />
-              <StreakCounter count={Number(step)} />
+              <StreakCounter count={Number(currentStep)} />
 
               <div tw="flex flex-col items-center w-full mt-[200px]">
                 <div tw="flex flex-col items-center w-full">
@@ -132,7 +134,7 @@ const handleRequest = frames(async (ctx) => {
             <Button
               action="post"
               key="3"
-              target={`/play?move=${move}&step=${step}&tx=${ctx.message.transactionId}`}
+              target={`/play?move=${move}&currentStep=${currentStep}&tx=${ctx.message.transactionId}`}
             >
               Refresh 🔄
             </Button>,
@@ -174,7 +176,7 @@ const handleRequest = frames(async (ctx) => {
           tw="w-full h-full flex bg-white px-4"
         >
           <UserBanner user={user} />
-          <StreakCounter count={Number(step)} />
+          <StreakCounter count={Number(currentStep)} />
           {/* here I would like to create an UI with the title "Choose your move" and below three boxes with the available moves (rock, paper, scissors).
           then a counter with the number of plays that returned a positive result and the UserBanner taken from ./components.
           The page isn't dynamic, so I don't want buttons but only boxes showing user the moves */}
@@ -246,8 +248,8 @@ const handleRequest = frames(async (ctx) => {
           <Button
             action="tx"
             key="2"
-            target={`/tx/move?move=rock&step=${step}&game=${game}`}
-            post_url={`/play?move=rock&step=${step + 1}&game=${game}`}
+            target={`/tx/move?move=rock&currentStep=${currentStep}&gameId=${gameId}&requiredPayment=${requiredPayment?.toString()}`}
+            post_url={`/play?move=rock`}
           >
             Rock 🪨
           </Button>
@@ -256,8 +258,8 @@ const handleRequest = frames(async (ctx) => {
           <Button
             action="tx"
             key="3"
-            target={`/tx/move?move=paper&step=${step}&game=${game}`}
-            post_url={`/play?move=paper&step=${step + 1}&game=${game}`}
+            target={`/tx/move?move=paper&currentStep=${currentStep}&gameId=${gameId}&requiredPayment=${requiredPayment?.toString()}`}
+            post_url={`/play?move=paper`}
           >
             Paper 📜
           </Button>
@@ -266,8 +268,8 @@ const handleRequest = frames(async (ctx) => {
           <Button
             action="tx"
             key="4"
-            target={`/tx/move?move=scissors&step=${step}&game=${game}`}
-            post_url={`/play?move=scissors&step=${step + 1}&game=${game}`}
+            target={`/tx/move?move=scissors&currentStep=${currentStep}&gameId=${gameId}&requiredPayment=${requiredPayment?.toString()}`}
+            post_url={`/play?move=scissors`}
           >
             Scissors ✂️
           </Button>

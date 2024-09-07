@@ -1,4 +1,4 @@
-import { Abi, encodeFunctionData, parseEther, parseUnits } from "viem";
+import { Abi, encodeFunctionData, parseEther } from "viem";
 import { frames } from "@/app/frames/frames";
 import { transaction } from "frames.js/core";
 import { sepolia } from "viem/chains";
@@ -17,7 +17,27 @@ export const POST = frames(async (ctx) => {
   }
 
   const userMove = ctx.url.searchParams.get("move");
-  const gameStep = ctx.url.searchParams.get("step") || "-1";
+  const gameId = ctx.url.searchParams.get("gameId");
+  const currentStep = ctx.url.searchParams.get("currentStep");
+  const requiredPayment = ctx.url.searchParams.get("requiredPayment");
+  console.log({
+    userMove,
+    gameId,
+    currentStep,
+    requiredPayment,
+  });
+
+  if (gameId == null) {
+    throw new Error("Invalid game id");
+  }
+
+  if (requiredPayment == null) {
+    throw new Error("Invalid payment");
+  }
+
+  if (currentStep == null) {
+    throw new Error("Invalid game step");
+  }
 
   // check if userMove is valid
   if (!userMove || !Object.values(GameMoves).includes(userMove as GameMoves)) {
@@ -31,8 +51,14 @@ export const POST = frames(async (ctx) => {
   const calldata = encodeFunctionData({
     abi: CONTRACT_ABI,
     functionName: "submitMove",
-    args: [BigInt(gameStep), userMoveNumber] as const,
+    args: [BigInt(gameId), userMoveNumber],
   });
+
+  console.log(
+    "Amount to pay test:",
+    requiredPayment,
+    parseEther("0.001").toString()
+  );
 
   return transaction({
     chainId: `eip155:${sepolia.id}`,
@@ -41,8 +67,7 @@ export const POST = frames(async (ctx) => {
       abi: CONTRACT_ABI as Abi,
       to: CONTRACT_ADDRESS,
       data: calldata,
-      // value: parseEther("0.0001").toString(),
-      value: "0",
+      value: requiredPayment,
     },
   });
 });

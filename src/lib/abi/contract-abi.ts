@@ -14,6 +14,76 @@ export const CONTRACT_ABI = [
   {
     inputs: [
       {
+        internalType: "uint64",
+        name: "gameId",
+        type: "uint64",
+      },
+    ],
+    name: "GameOver",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "required",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "provided",
+        type: "uint256",
+      },
+    ],
+    name: "InsufficientFunds",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "int64",
+        name: "gameId",
+        type: "int64",
+      },
+    ],
+    name: "InvalidGameId",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint8",
+        name: "move",
+        type: "uint8",
+      },
+    ],
+    name: "InvalidMove",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "LastGameNotOver",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "player",
+        type: "address",
+      },
+      {
+        internalType: "uint64",
+        name: "gameId",
+        type: "uint64",
+      },
+    ],
+    name: "NotYourGame",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
         internalType: "address",
         name: "have",
         type: "address",
@@ -25,6 +95,40 @@ export const CONTRACT_ABI = [
       },
     ],
     name: "OnlyVRFWrapperCanFulfill",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_requestId",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256[]",
+        name: "_randomWords",
+        type: "uint256[]",
+      },
+    ],
+    name: "rawFulfillRandomWords",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "requestId",
+        type: "uint256",
+      },
+    ],
+    name: "RequestNotFound",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "UnexpectedPayment",
     type: "error",
   },
   {
@@ -64,24 +168,6 @@ export const CONTRACT_ABI = [
     ],
     name: "OwnershipTransferred",
     type: "event",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_requestId",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256[]",
-        name: "_randomWords",
-        type: "uint256[]",
-      },
-    ],
-    name: "rawFulfillRandomWords",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
   },
   {
     anonymous: false,
@@ -580,6 +666,16 @@ export const CONTRACT_ABI = [
         internalType: "uint256",
         name: "requiredPayment",
         type: "uint256",
+      },
+      {
+        internalType: "uint8",
+        name: "currentStep",
+        type: "uint8",
+      },
+      {
+        internalType: "uint8",
+        name: "remainingGames",
+        type: "uint8",
       },
     ],
     stateMutability: "view",

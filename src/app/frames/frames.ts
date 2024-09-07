@@ -2,6 +2,7 @@ import { farcasterHubContext, openframes } from "frames.js/middleware";
 import { imagesWorkerMiddleware } from "frames.js/middleware/images-worker";
 import { createFrames } from "frames.js/next";
 import { isXmtpFrameActionPayload, getXmtpFrameMessage } from "frames.js/xmtp";
+import { neynarValidate } from "frames.js/middleware/neynar";
 
 export type State = {
   count: number;
@@ -13,6 +14,9 @@ export const frames = createFrames<State>({
   },
   basePath: "/frames",
   middleware: [
+    neynarValidate({
+      API_KEY: process.env.NEYNAR_API_KEY!,
+    }),
     farcasterHubContext({
       // remove if you aren't using @frames.js/debugger or you just don't want to use the debugger hub
       ...(process.env.NODE_ENV === "production"
