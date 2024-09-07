@@ -11,8 +11,8 @@ export async function generateMetadata(): Promise<Metadata> {
       ...(await fetchMetadata(
         new URL(
           "/frames",
-          process.env.VERCEL_URL
-            ? `https://${process.env.VERCEL_URL}`
+          process.env.NEXT_PUBLIC_HOST
+            ? `https://${process.env.NEXT_PUBLIC_HOST}`
             : "http://localhost:3000"
         )
       )),
