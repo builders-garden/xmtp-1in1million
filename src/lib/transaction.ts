@@ -115,9 +115,16 @@ const getAllPlayers = async (): Promise<PlayerMerged[]> => {
 
 const getLeaderboard = async (): Promise<PlayerMerged[]> => {
   const players = await getAllPlayers();
-  return players.sort(
+
+  // Create a map of players by address for efficient lookup
+  const playerMap = new Map(players.map((player) => [player.address, player]));
+
+  // Merge players with the same address and sort by bestRound
+  const mergedPlayers = Array.from(playerMap.values()).sort(
     (a, b) => Number(b.stats.bestRound) - Number(a.stats.bestRound)
   );
+
+  return mergedPlayers;
 };
 
 const getSubmitMoveParams = async (address: string) => {
