@@ -7,6 +7,15 @@ import {
 } from "viem";
 import { CONTRACT_ABI } from "./abi/contract-abi";
 import { sepolia } from "viem/chains";
+import { getFarcasterUserByAddress } from "./farcaster";
+import {
+  Game,
+  GameMerged,
+  PlayerMerged,
+  Step,
+  UserStats,
+  FarcasterUser,
+} from "@/lib/zod/types";
 
 const publicClient = createPublicClient({
   chain: sepolia,
@@ -14,51 +23,6 @@ const publicClient = createPublicClient({
 });
 
 export const CONTRACT_ADDRESS = "0xBC32487413e6bff8fE784Eef74d4029f8033092c";
-
-enum Move {
-  ROCK = "ROCK",
-  PAPER = "PAPER",
-  SCISSORS = "SCISSORS",
-}
-
-export enum GameState {
-  IN_PROGRESS = "IN_PROGRESS",
-  PLAYER_WON = "PLAYER_WON",
-  PLAYER_LOST = "PLAYER_LOST",
-}
-
-interface Step {
-  id: bigint;
-  playerMove: Move;
-  contractMove: Move;
-  result: boolean;
-}
-
-interface Game {
-  id: bigint;
-  player: `0x${string}`; // Ethereum address
-  currentStep: number;
-  state: GameState;
-  steps: bigint[]; // step ids
-}
-
-interface UserStats {
-  gamesWon: bigint;
-  gamesLost: bigint;
-  bestRound: number;
-  totalSpent: bigint;
-  totalWon: bigint;
-}
-
-export interface GameMerged extends Omit<Game, "steps"> {
-  steps: Step[];
-}
-
-export interface PlayerMerged {
-  address: `0x${string}`;
-  stats: UserStats;
-  gamesPlayed: number[];
-}
 
 export async function getTransactionReceipt(txHash: `0x${string}`) {
   // const publicClient = getPublicClient(chain);
@@ -87,10 +51,29 @@ const getAllGames = async (): Promise<GameMerged[]> => {
 
   const [games, allSteps] = data;
 
-  const mergedGames = games.map((game, index) => ({
-    ...game,
-    steps: allSteps[index] || [],
-  })) as GameMerged[];
+  const mergedGames = await Promise.all(
+    games.map(async (game, index) => {
+      let farcasterUserData = null;
+      try {
+        farcasterUserData = await getFarcasterUserByAddress(
+          game.player as `0x${string}`
+        );
+      } catch (error) {
+        console.error("Farcaster user not found for address:", game.player);
+        farcasterUserData = {
+          fid: -1,
+          displayName: "Unknown",
+          username: game.player,
+          pfp: "https://placehold.co/100x100",
+        } as FarcasterUser;
+      }
+      return {
+        ...game,
+        steps: allSteps[index] || [],
+        farcasterUser: farcasterUserData,
+      } as GameMerged;
+    })
+  );
 
   return mergedGames;
 };
@@ -104,11 +87,28 @@ const getAllPlayers = async (): Promise<PlayerMerged[]> => {
 
   const [addresses, stats, gamesPlayed] = data;
 
-  const mergedPlayers = addresses.map((address, index) => ({
-    address,
-    stats: stats[index],
-    gamesPlayed: gamesPlayed[index] || [],
-  })) as PlayerMerged[];
+  const mergedPlayers = await Promise.all(
+    addresses.map(async (address, index) => {
+      let farcasterUserData = null;
+      try {
+        farcasterUserData = await getFarcasterUserByAddress(address);
+      } catch (error) {
+        console.error("Farcaster user not found for address:", address);
+        farcasterUserData = {
+          fid: -1,
+          displayName: "Unknown",
+          username: address,
+          pfp: "https://placehold.co/100x100",
+        } as FarcasterUser;
+      }
+      return {
+        address,
+        farcasterUser: farcasterUserData,
+        stats: stats[index],
+        gamesPlayed: gamesPlayed[index] || [],
+      } as PlayerMerged;
+    })
+  );
 
   return mergedPlayers;
 };

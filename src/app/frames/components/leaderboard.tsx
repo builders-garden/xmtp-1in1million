@@ -1,11 +1,8 @@
-import { UserDataReturnType } from "frames.js";
 import { LeaderboardRow } from ".";
+import { PlayerMerged } from "@/lib/zod/types";
 
 interface LeaderboardProps {
-  leaderboardUsers: (UserDataReturnType & {
-    wins: number;
-    bestRound: number;
-  })[];
+  leaderboardUsers: PlayerMerged[];
 }
 
 const Leaderboard = ({ leaderboardUsers }: LeaderboardProps) => {
@@ -39,7 +36,7 @@ const Leaderboard = ({ leaderboardUsers }: LeaderboardProps) => {
       </div>
       <hr tw="w-full h-1 bg-black my-4" />
       {leaderboardUsers.map((user, index) => (
-        <LeaderboardRow key={index} row={user} />
+        <LeaderboardRow key={index} player={user} />
       ))}
     </div>
   );

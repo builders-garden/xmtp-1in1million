@@ -14,6 +14,7 @@ const FooterStats = ({
       {/* <p tw="text-[30px]">% of winning: {perc_winning}%</p> */}
       {/* <p tw="text-[30px]">Wins to the next reward: {wins_to_next_reward}</p> */}
       <p tw="text-[30px]">Remaining games: {remaining_games}</p>
+      <p tw="text-[30px]">You are going to pay</p>
     </div>
   );
 };

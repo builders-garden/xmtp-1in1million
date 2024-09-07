@@ -1,112 +1,155 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { useWeb3AuthContext } from "@/hooks/web3auth-context";
-import { getAllGames, getLeaderboard } from "@/lib/transaction";
 import { useQuery } from "@tanstack/react-query";
-import { formatEther } from "viem";
+import { GameMerged, PlayerMerged } from "@/lib/zod/types";
+import {
+  LeaderboardTable,
+  columns as leaderboardColumns,
+} from "@/components/leaderboard-table";
+import { GamesTable, columns as gamesColumns } from "@/components/games-table";
 
-const fetchUserAddresses = async (fid: number) => {
-  const addresses = await fetch("/api/farcaster?fid=" + fid);
-  const data = await addresses.json();
-  return data.addresses;
+const fetchUserAddresses = async (fid: number): Promise<`0x${string}`[]> => {
+  try {
+    const addresses = await fetch("/api/farcaster?fid=" + fid)
+      .then((res) => res.json())
+      .then((data) => JSON.parse(data.addresses));
+
+    return addresses as `0x${string}`[];
+  } catch (error) {
+    console.error("Error fetching user addresses from fid:", fid, error);
+    return [];
+  }
+};
+
+const fetchAllGames = async (): Promise<GameMerged[]> => {
+  try {
+    const games = await fetch("/api/games")
+      .then((res) => res.json())
+      .then((data) => JSON.parse(data.games));
+
+    return games as GameMerged[];
+  } catch (error) {
+    console.error("Error fetching games:", error);
+    return [];
+  }
+};
+
+const fetchLeaderboard = async (): Promise<PlayerMerged[]> => {
+  try {
+    const data = await fetch("/api/leaderboard")
+      .then((res) => res.json())
+      .then((data) => JSON.parse(data.leaderboard));
+    return data as PlayerMerged[];
+  } catch (error) {
+    console.error("Error fetching leaderboard:", error);
+    return [];
+  }
 };
 
 function Dashboard() {
-  const { data: games } = useQuery({
-    queryKey: ["getAllGames"],
-    queryFn: getAllGames,
-  });
-  const { data: leaderboard } = useQuery({
-    queryKey: ["getLeaderboard"],
-    queryFn: getLeaderboard,
-  });
-
   const { user, loggedIn, login } = useWeb3AuthContext();
   const userFid = parseInt(user?.verifierId || "1");
 
-  const { data: farcasterUserAddresses } = useQuery({
+  const {
+    data: games,
+    isLoading: gamesLoading,
+    isFetched: gamesFetched,
+  } = useQuery({
+    queryKey: ["getAllGames"],
+    queryFn: fetchAllGames,
+  });
+  const {
+    data: leaderboard,
+    isLoading: leaderboardLoading,
+    isFetched: leaderboardFetched,
+  } = useQuery({
+    queryKey: ["getLeaderboard"],
+    queryFn: fetchLeaderboard,
+  });
+
+  const {
+    data: farcasterUserAddresses,
+    isLoading: farcasterUserAddressesLoading,
+    isFetched: farcasterUserAddressesFetched,
+  } = useQuery({
     queryKey: ["getFarcasterUser", userFid],
     queryFn: () => fetchUserAddresses(userFid),
     enabled: !!userFid,
   });
-  const userGames = games?.filter((game) =>
-    farcasterUserAddresses?.addresses?.includes(game.player)
-  );
+  // const farcasterUserAddresses = [
+  //   "0xAf22B0CE4B439769579A892457B9fC391bF1BC96" as `0x${string}`,
+  // ];
+  // const farcasterUserAddressesFetched = true;
+
+  const transformedUserGames = useMemo(() => {
+    if (
+      gamesFetched &&
+      farcasterUserAddressesFetched &&
+      Array.isArray(games) &&
+      farcasterUserAddresses
+    ) {
+      return games
+        .filter((game) =>
+          farcasterUserAddresses.includes(game.player as `0x${string}`)
+        )
+        .map((game) => ({
+          ...game,
+          address: game.player,
+          farcasterUser: null, // You might want to fetch this separately
+          stats: {
+            gamesWon: 0n, // Replace with actual data if available
+            gamesLost: 0n,
+            bestRound: game.currentStep,
+            totalSpent: 0n,
+            totalWon: 0n,
+          },
+          gamesPlayed: [Number(game.id)],
+        })) as GameMerged[];
+    }
+    return [] as GameMerged[];
+  }, [
+    gamesFetched,
+    farcasterUserAddressesFetched,
+    games,
+    farcasterUserAddresses,
+  ]);
+
+  console.log({ transformedUserGames, leaderboard });
 
   return (
     <div className="container">
       <div className="flex flex-col gap-12 items-start justify-center p-4 bg-slate-100">
         <div className="w-full">
-          <h2 className="text-2xl font-bold">Leaderboard</h2>
-          <Table>
-            <TableCaption>A list of the best users.</TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="">User</TableHead>
-                <TableHead>Wins in a row</TableHead>
-                <TableHead>Best round</TableHead>
-                <TableHead className="">Total spent</TableHead>
-                <TableHead className="">Total won</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {leaderboard?.map((player) => (
-                <TableRow key={player.address}>
-                  <TableCell className="font-semibold">
-                    {player.address}
-                  </TableCell>
-                  <TableCell>{player.stats.gamesWon.toString()}</TableCell>
-                  <TableCell>{player.stats.bestRound}</TableCell>
-                  <TableCell>
-                    {`${formatEther(player.stats.totalSpent)} ETH`}
-                  </TableCell>
-                  <TableCell>
-                    {`${formatEther(player.stats.totalWon)} ETH`}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <h2 className="text-2xl font-bold mb-4">Leaderboard</h2>
+          {leaderboardLoading ? (
+            <p>Loading leaderboard...</p>
+          ) : leaderboard && leaderboard.length > 0 ? (
+            <LeaderboardTable
+              columns={leaderboardColumns}
+              data={leaderboard}
+              defaultPageSize={10}
+            />
+          ) : (
+            <p>The leaderboard is empty.</p>
+          )}
         </div>
         {loggedIn ? (
           <div className="w-full">
-            <h2 className="text-2xl font-bold">Your games</h2>
-            <Table>
-              <TableCaption>
-                {userGames && userGames.length > 0
-                  ? "A list of your recent games."
-                  : "You don't have any games yet."}
-              </TableCaption>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="">Player</TableHead>
-                  <TableHead className="">State</TableHead>
-                  <TableHead className="">Current step</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {userGames?.map((game) => (
-                  <TableRow key={game.id}>
-                    <TableCell className="font-semibold">
-                      {game.player}
-                    </TableCell>
-                    <TableCell>{game.state}</TableCell>
-                    <TableCell>{game.currentStep}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <h2 className="text-2xl font-bold mb-4">Your games</h2>
+            {gamesLoading ? (
+              <p>Loading your games...</p>
+            ) : transformedUserGames && transformedUserGames.length > 0 ? (
+              <GamesTable
+                columns={gamesColumns}
+                data={transformedUserGames}
+                defaultPageSize={10}
+              />
+            ) : (
+              <p>You don't have any games yet.</p>
+            )}
           </div>
         ) : (
           <>

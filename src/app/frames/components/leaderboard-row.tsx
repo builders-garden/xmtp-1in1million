@@ -1,28 +1,54 @@
-import { UserDataReturnType } from "frames.js";
+import { PlayerMerged } from "@/lib/zod/types";
 
-interface UserBannerProps {
-  row: UserDataReturnType & { wins: number; bestRound: number };
+interface LeaderboardRowProps {
+  player: PlayerMerged;
 }
 
-const LeaderboardRow = ({ row }: UserBannerProps) => {
+const LeaderboardRow = ({ player }: LeaderboardRowProps) => {
+  const pfp = player.farcasterUser?.fid != -1 ? player.farcasterUser?.pfp : "";
+
   return (
     <div tw="flex justify-between my-4">
-      <p tw="h-[78px] w-[300px] text-[38px] items-center m-0 p-0">
-        <img
-          src={`${row.profileImage || ""}`}
-          alt={`${row.displayName} profile image`}
-          tw="w-[78px] h-[78px] rounded-full"
-        />
-        <span
-          style={{
-            fontFamily: "BRSonoma-Bold",
-          }}
-          tw="ml-4"
-        >
-          {row.username && row.username?.length > 14
-            ? `${row.username.slice(0, 10)}...`
-            : row.username}
-        </span>
+      <p tw="text-[38px] items-center m-0 p-0">
+        {pfp ? (
+          <img
+            src={`${pfp || ""}`}
+            tw="w-[12px] h-[12px] rounded-full"
+            style={{ objectFit: "cover" }}
+          />
+        ) : (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            width="48"
+            height="48"
+          >
+            <path
+              fillRule="evenodd"
+              d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"
+              clipRule="evenodd"
+            />
+          </svg>
+        )}
+        <div tw="flex flex-col ml-4">
+          <span
+            style={{
+              fontFamily: "BRSonoma-Bold",
+            }}
+          >
+            {player.farcasterUser?.displayName &&
+            player.farcasterUser?.displayName?.length > 14
+              ? `${player.farcasterUser?.displayName.slice(0, 10)}...`
+              : player.farcasterUser?.displayName}
+          </span>
+          <span tw="text-[28px]">
+            {player.farcasterUser?.username &&
+            player.farcasterUser?.username?.length > 14
+              ? `${player.farcasterUser?.username.slice(0, 6)}...${player.farcasterUser?.username.slice(-4)}`
+              : player.farcasterUser?.username}
+          </span>
+        </div>
       </p>
       <p
         style={{
@@ -31,7 +57,7 @@ const LeaderboardRow = ({ row }: UserBannerProps) => {
         }}
         tw="h-[78px] w-[250px] text-[38px] items-center m-0 p-0"
       >
-        {row.wins}
+        {player.stats.gamesWon.toString()}
       </p>
       <p
         style={{
@@ -40,7 +66,7 @@ const LeaderboardRow = ({ row }: UserBannerProps) => {
         }}
         tw="h-[78px] w-[300px] text-[38px] items-center m-0 p-0"
       >
-        {row.bestRound}
+        {player.stats.bestRound}
       </p>
     </div>
   );

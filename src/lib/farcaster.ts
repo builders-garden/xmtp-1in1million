@@ -8,7 +8,7 @@ if (!apiKey) {
 
 const client = new NeynarAPIClient(apiKey);
 
-const getFarcasterUserAddresses = async (
+const getFarcasterUserAddressesByFid = async (
   fid: number
 ): Promise<`0x${string}`[]> => {
   const user = await client.fetchBulkUsers([fid]);
@@ -25,4 +25,9 @@ const getFarcasterUserAddresses = async (
   return addresses;
 };
 
-export { getFarcasterUserAddresses };
+const getFarcasterUserByAddress = async (address: `0x${string}`) => {
+  const users = await client.fetchBulkUsersByEthereumAddress([address]);
+  return users;
+};
+
+export { getFarcasterUserAddressesByFid, getFarcasterUserByAddress };

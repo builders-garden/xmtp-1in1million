@@ -2,6 +2,7 @@ import { Button } from "frames.js/next";
 import { frames } from "@/app/frames/frames";
 import { getUserDataForFid, UserDataReturnType } from "frames.js";
 import { Leaderboard, UserBanner } from "../components";
+import { getLeaderboard } from "@/lib/transaction";
 
 const handleRequest = frames(async (ctx) => {
   if (!ctx.message?.requesterFid) {
@@ -23,20 +24,8 @@ const handleRequest = frames(async (ctx) => {
   });
   console.log("User:", user);
 
-  // leaderboardUsers is an array of objects with type UserDataReturnType and an additional wins property
-  const leaderboardUsers: (UserDataReturnType & {
-    wins: number;
-    bestRound: number;
-  })[] = [];
-
-  for (let i = 0; i < 5; i++) {
-    leaderboardUsers.push({
-      ...(await getUserDataForFid({ fid: i + 10 })),
-      // generate random wins and bestRound for each user in the leaderboard from 1 to 100
-      wins: Math.floor(Math.random() * 100) + 1,
-      bestRound: Math.floor(Math.random() * 100) + 1,
-    });
-  }
+  const leaderboardData = await getLeaderboard();
+  const leaderboardUsers = leaderboardData.slice(0, 3);
 
   return {
     image: (
