@@ -1,0 +1,6 @@
+[[dependencies]]
+name = "@chainlink-contracts"
+version = "1.2.0"
+source = "https://soldeer-revisions.s3.amazonaws.com/@chainlink-contracts/1_2_0_19-08-2024_05:22:05_contracts.zip"
+checksum = "08f7fc58fb8976a16213bcf18720b94aa779c9507db45c5d969f7a87214bc30b"
+integrity = "5f80841e89d39b4e3a7926acce6c03b0f1c7f76088cb334ba2dcf18b4e3a5b28"
