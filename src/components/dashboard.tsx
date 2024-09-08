@@ -122,7 +122,7 @@ function Dashboard() {
   return (
     <div className="container flex flex-col gap-16 items-start justify-center p-4">
       <div className="w-full">
-        <h2 className="text-2xl font-bold mb-4">Leaderboard</h2>
+        <h2 className="text-4xl mb-4 font-bagel">Leaderboard</h2>
           {leaderboardLoading ? (
             <p>Loading leaderboard...</p>
           ) : leaderboard && leaderboard.length > 0 ? (
@@ -152,8 +152,8 @@ function Dashboard() {
           </div>
         ) : (
           // align left
-          <div className="flex flex-col gap-4 items-start">
-            <h2 className="text-2xl font-bold">To see your games, login.</h2>
+          <div className="flex flex-col gap-6 items-start">
+            <h2 className="text-3xl font-bagel">To see your games, login.</h2>
             <button
               onClick={login}
               className="px-4 py-2 bg-indigo-600 rounded hover:bg-indigo-700 text-white transition-all duration-300"

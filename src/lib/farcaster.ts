@@ -27,7 +27,17 @@ const getFarcasterUserAddressesByFid = async (
 
 const getFarcasterUserByAddress = async (address: `0x${string}`) => {
   const users = await client.fetchBulkUsersByEthereumAddress([address]);
-  return users;
+  const user = users[address.toLowerCase()]?.[0];
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+  return {
+    fid: user.fid,
+    displayName: user.display_name,
+    username: user.username,
+    pfp: user.pfp_url,
+  };
 };
 
 export { getFarcasterUserAddressesByFid, getFarcasterUserByAddress };

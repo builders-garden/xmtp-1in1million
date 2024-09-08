@@ -51,7 +51,7 @@ export const columns: ColumnDef<PlayerMerged>[] = [
                   <Link
                     href={`https://warpcast.com/${player.farcasterUser.username}`}
                     target="_blank"
-                    className="text-sm hover:underline"
+                    className="text-indigo-400 text-sm hover:underline font-semibold"
                   >
                     {player.farcasterUser.username?.length > 14
                       ? `@${player.farcasterUser.username?.slice(0, 10)}...`
@@ -61,7 +61,7 @@ export const columns: ColumnDef<PlayerMerged>[] = [
                   <Link
                     href={`https://sepolia.etherscan.io/address/${row.original.address}`}
                     target="_blank"
-                    className="text-indigo-600 hover:underline text-sm"
+                    className="text-indigo-400 hover:underline text-sm font-semibold"
                   >
                     {`${row.original.address.slice(0, 6)}...${row.original.address.slice(-4)}`}
                   </Link>

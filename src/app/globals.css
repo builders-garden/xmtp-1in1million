@@ -10,19 +10,19 @@ body {
 @layer base {
   @font-face {
     font-family: "BagelFatOne";
-    src: url("/assets/BagelFatOne-Regular.ttf") format("ttf");
+    src: url("/assets/BagelFatOne-Regular.ttf") format("opentype");
     font-weight: normal;
     font-display: swap;
   }
   @font-face {
     font-family: "BRSonoma";
-    src: url("/assets/BRSonoma-Regular.otf") format("otf");
+    src: url("/assets/BRSonoma-Regular.otf") format("opentype");
     font-weight: 400;
     font-display: swap;
   }
   @font-face {
     font-family: "BRSonoma";
-    src: url("/assets/BRSonoma-Bold.otf") format("otf");
+    src: url("/assets/BRSonoma-Bold.otf") format("opentype");
     font-weight: 700;
     font-display: swap;
   }

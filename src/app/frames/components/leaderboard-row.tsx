@@ -6,15 +6,28 @@ interface LeaderboardRowProps {
 
 const LeaderboardRow = ({ player }: LeaderboardRowProps) => {
   const pfp = player.farcasterUser?.fid != -1 ? player.farcasterUser?.pfp : "";
+  const displayName =
+    player.farcasterUser?.displayName &&
+    player.farcasterUser.displayName.length > 14
+      ? `${player.farcasterUser?.displayName.slice(0, 10)}...`
+      : player.farcasterUser?.displayName;
+  const username =
+    player.farcasterUser?.fid != -1
+      ? player.farcasterUser?.username &&
+        player.farcasterUser?.username?.length > 14
+        ? `${player.farcasterUser?.username.slice(0, 6)}...${player.farcasterUser?.username.slice(-4)}`
+        : player.farcasterUser?.username
+      : `${player.address.slice(0, 6)}...${player.address.slice(-4)}`;
+  console.log("frame leaderboard row", player, username, displayName, pfp);
 
   return (
     <div tw="flex justify-between my-4">
       <p tw="text-[38px] items-center m-0 p-0">
         {pfp ? (
           <img
-            src={`${pfp || ""}`}
-            tw="w-[12px] h-[12px] rounded-full"
-            style={{ objectFit: "cover" }}
+            src={pfp}
+            tw="w-[12px] h-[12px]"
+            style={{ objectFit: "cover", borderRadius: "50%" }}
           />
         ) : (
           <svg
@@ -37,17 +50,9 @@ const LeaderboardRow = ({ player }: LeaderboardRowProps) => {
               fontFamily: "BRSonoma-Bold",
             }}
           >
-            {player.farcasterUser?.displayName &&
-            player.farcasterUser?.displayName?.length > 14
-              ? `${player.farcasterUser?.displayName.slice(0, 10)}...`
-              : player.farcasterUser?.displayName}
+            {displayName}
           </span>
-          <span tw="text-[28px]">
-            {player.farcasterUser?.username &&
-            player.farcasterUser?.username?.length > 14
-              ? `${player.farcasterUser?.username.slice(0, 6)}...${player.farcasterUser?.username.slice(-4)}`
-              : player.farcasterUser?.username}
-          </span>
+          <span tw="text-[28px]">{username}</span>
         </div>
       </p>
       <p

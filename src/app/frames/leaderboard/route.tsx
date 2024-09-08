@@ -26,6 +26,7 @@ const handleRequest = frames(async (ctx) => {
 
   const leaderboardData = await getLeaderboard();
   const leaderboardUsers = leaderboardData.slice(0, 3);
+  console.log("Leaderboard users:", leaderboardUsers);
 
   return {
     image: (

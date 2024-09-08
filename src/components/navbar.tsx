@@ -12,7 +12,7 @@ function Navbar() {
       <nav className="flex items-center justify-between p-4">
         {loggedIn ? (
           <>
-            <h2 className="text-2xl font-bold font-brsonoma">1 in 1 million</h2>
+            <h2 className="text-4xl font-bagel">1 in 1 Million</h2>
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
                 {user?.profileImage && (
@@ -37,7 +37,7 @@ function Navbar() {
           </>
         ) : (
           <>
-            <h2 className="text-2xl font-bold">1 in 1 million</h2>
+            <h2 className="text-4xl font-bagel">1 in 1 Million</h2>
             <button
               onClick={login}
               className="px-4 py-2 bg-indigo-600 rounded hover:bg-indigo-700 text-white"

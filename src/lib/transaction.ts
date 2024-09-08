@@ -1,6 +1,7 @@
 import {
   Abi,
   createPublicClient,
+  getAddress,
   http,
   parseEventLogs,
   TransactionReceipt,
@@ -108,7 +109,6 @@ const getAllPlayers = async (): Promise<PlayerMerged[]> => {
 
 const getLeaderboard = async (): Promise<PlayerMerged[]> => {
   const players = await getAllPlayers();
-
   // Create a map of players by address for efficient lookup
   const tmpPlayerMap = new Map(
     players.map((player) => [player.address, player])
@@ -130,12 +130,14 @@ const getLeaderboard = async (): Promise<PlayerMerged[]> => {
           pfp: "https://placehold.co/100x100",
         } as FarcasterUser;
       }
-      return {
-        address: player.address,
+      const playerMerged = {
+        address: getAddress(player.address),
         stats: player.stats,
         gamesPlayed: player.gamesPlayed,
         farcasterUser: farcasterUserData,
       } as PlayerMerged;
+
+      return playerMerged;
     })
   );
 
