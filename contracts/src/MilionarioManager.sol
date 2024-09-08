@@ -11,6 +11,15 @@ import {VRFV2PlusClient} from "@chainlink-contracts-1.2.0/src/v0.8/vrf/dev/libra
  * Find information on LINK Token Contracts and get the latest ETH and LINK faucets here: https://docs.chain.link/docs/link-token-contracts/
  */
 
+error InvalidMove(uint8 move);
+error InvalidGameId(int64 gameId);
+error LastGameNotOver();
+error InsufficientFunds(uint256 required, uint256 provided);
+error UnexpectedPayment();
+error NotYourGame(address player, uint64 gameId);
+error GameOver(uint64 gameId);
+error RequestNotFound(uint256 requestId);
+
 contract MilionarioManager is VRFV2PlusWrapperConsumerBase, ConfirmedOwner {
     event RequestSent(uint256 requestId, uint32 numWords);
     event RequestFulfilled(
@@ -50,7 +59,7 @@ contract MilionarioManager is VRFV2PlusWrapperConsumerBase, ConfirmedOwner {
     // this limit based on the network that you select, the size of the request,
     // and the processing of the callback request in the fulfillRandomWords()
     // function.
-    uint32 public callbackGasLimit = 100000;
+    uint32 public callbackGasLimit = 1000000;
 
     // The default is 3, but you can set this higher.
     uint16 public requestConfirmations = 3;
@@ -70,7 +79,7 @@ contract MilionarioManager is VRFV2PlusWrapperConsumerBase, ConfirmedOwner {
     uint8 public constant STEPS_WIN_1 = 6;  // > 6, withdraw first reward
     uint8 public constant STEPS_WIN_2 = 9;  // > 9, withdraw second reward
     uint8 public constant STEPS_VRF = 6;    // > 6, use VRF
-    uint256 public constant SESSION_COST = 0.001 ether;
+    uint256 public constant SESSION_COST = 0.015 ether;
     
     // percentage of the pool to reward the player
     uint8 public constant REWARD_1 = 10;
@@ -170,7 +179,7 @@ contract MilionarioManager is VRFV2PlusWrapperConsumerBase, ConfirmedOwner {
         uint256 _requestId,
         uint256[] memory _randomWords
     ) internal override {
-        require(s_requests[_requestId].paid > 0, "request not found");
+        if (s_requests[_requestId].paid == 0) revert RequestNotFound(_requestId);
         s_requests[_requestId].fulfilled = true;
         s_requests[_requestId].randomWords = _randomWords;
 
@@ -208,7 +217,7 @@ contract MilionarioManager is VRFV2PlusWrapperConsumerBase, ConfirmedOwner {
         view
         returns (uint256 paid, bool fulfilled, uint256[] memory randomWords)
     {
-        require(s_requests[_requestId].paid > 0, "request not found");
+        if (s_requests[_requestId].paid == 0) revert RequestNotFound(_requestId);
         RequestStatus memory request = s_requests[_requestId];
         return (request.paid, request.fulfilled, request.randomWords);
     }
@@ -311,29 +320,29 @@ contract MilionarioManager is VRFV2PlusWrapperConsumerBase, ConfirmedOwner {
         external
         payable
     {
-        require(_playerMoveInt < 3, "Invalid move");
-        require(_gameId >= -1, "Invalid game ID");
+        if (_playerMoveInt >= 3) revert InvalidMove(_playerMoveInt);
+        if (_gameId < -1) revert InvalidGameId(_gameId);
 
         uint64 gameId;
         uint8 currentStep;
 
         if (_gameId == -1) {
-            // require that the last player's game is over
-            require(
-                playerGamesCounter[msg.sender] == 0 ||
-                    games[playerGamesCounter[msg.sender] - 1].state != GameState.IN_PROGRESS,
-                "Last game is not over"
-            );
+            // Check if the last player's game is over
+            if (playerGamesCounter[msg.sender] > 0 &&
+                games[playerGamesCounter[msg.sender] - 1].state == GameState.IN_PROGRESS) {
+                revert LastGameNotOver();
+            }
 
-            // Creating a new game when _gameId is -1
             uint64 playerGameCounter = playerGamesCounter[msg.sender];
 
             // Check if payment is required for a new session
             if (playerGameCounter % MAX_GAMES_PER_SESSION == 0) {
-                require(msg.value >= SESSION_COST, "Not enough funds");
+                if (msg.value < SESSION_COST) {
+                    revert InsufficientFunds(SESSION_COST, msg.value);
+                }
                 userStats[msg.sender].totalSpent += msg.value; // Update total spent
             } else {
-                require(msg.value == 0, "No need to pay for a new session");
+                if (msg.value > 0) revert UnexpectedPayment();
             }
 
             // create the game
@@ -350,12 +359,11 @@ contract MilionarioManager is VRFV2PlusWrapperConsumerBase, ConfirmedOwner {
 
             playerGamesCounter[msg.sender]++; // Increment player's game counter
         } else {
-            // Submitting a move for an existing game
-            require(uint64(_gameId) < gamesCounter, "Invalid game ID");
+            if (uint64(_gameId) >= gamesCounter) revert InvalidGameId(_gameId);
 
             Game memory game = games[uint64(_gameId)];
-            require(game.player == msg.sender, "Not your game");
-            require(game.state == GameState.IN_PROGRESS, "Game is over");
+            if (game.player != msg.sender) revert NotYourGame(msg.sender, uint64(_gameId));
+            if (game.state != GameState.IN_PROGRESS) revert GameOver(uint64(_gameId));
 
             gameId = game.id;
             currentStep = game.currentStep;
@@ -364,14 +372,10 @@ contract MilionarioManager is VRFV2PlusWrapperConsumerBase, ConfirmedOwner {
         if (currentStep < STEPS_VRF) {
             // If the game is below the VRF step threshold, generate a random number locally
             uint256 randomNumber = block.prevrandao;
-            (contractMove, stepResult, playerReward) = createStep(
-                gameId,
-                _playerMoveInt,
-                randomNumber
-            );
+            createStep(gameId, _playerMoveInt, randomNumber);
         } else {
             // If the game has reached the VRF step threshold, request randomness
-            requestId = requestRandomWords(true, gameId, _playerMoveInt);
+            requestRandomWords(true, gameId, _playerMoveInt);
         }
     }
 
@@ -418,7 +422,15 @@ contract MilionarioManager is VRFV2PlusWrapperConsumerBase, ConfirmedOwner {
         return (allGames, allGameSteps);
     }
 
-    function getAllPlayers() external view returns (address[] memory, UserStats[] memory, uint64[][] memory) {
+    function getAllPlayers()
+        external
+        view
+        returns (
+            address[] memory,
+            UserStats[] memory,
+            uint64[][] memory
+        )
+    {
         uint64 totalPlayers = 0;
 
         // Determine the total number of players
@@ -456,22 +468,49 @@ contract MilionarioManager is VRFV2PlusWrapperConsumerBase, ConfirmedOwner {
         return (players, stats, gamesPlayed);
     }
 
-    function getSubmitMoveParams(address player) public view returns (int64 gameId, uint256 requiredPayment) {
-        uint64 playerGameCounter = playerGamesCounter[player];
+    function getSubmitMoveParams(address player)
+        public
+        view
+        returns (
+            int64 gameId,
+            uint256 requiredPayment,
+            uint8 currentStep,
+            uint8 remainingGames
+        )
+    {
+        uint64 playerGameCount = playerGamesCounter[player];
 
+        uint8 playerGameCountMod = uint8(playerGameCount % MAX_GAMES_PER_SESSION);
+        
+        // Calculate remaining games
+        if (playerGameCount == 0) {
+            remainingGames = 0; // First time user, hasn't paid for a session yet
+        } else {
+            remainingGames = playerGameCountMod == 0 ? 0 : uint8(MAX_GAMES_PER_SESSION - playerGameCountMod);
+        }
+        
         // Check if the player has an ongoing game
-        if (playerGameCounter > 0) {
-            uint64 lastGameId = playerGameCounter - 1;
-            if (games[lastGameId].state == GameState.IN_PROGRESS) {
-                return (int64(lastGameId), 0); // Return the ongoing game ID and no payment required
+        if (playerGameCount > 0) {
+            uint64 lastGameId = playerGameCount - 1;
+            Game memory lastGame = games[lastGameId];
+            
+            if (lastGame.state == GameState.IN_PROGRESS) {
+                return (
+                    int64(lastGameId),
+                    0,
+                    lastGame.currentStep,
+                    remainingGames
+                );
             }
         }
-
-        // If no ongoing game, check if payment is required for a new session
-        if (playerGameCounter % MAX_GAMES_PER_SESSION == 0) {
-            return (-1, SESSION_COST); // New game (-1) and payment required
-        } else {
-            return (-1, 0); // New game (-1) and no payment required
-        }
+        
+        // If no ongoing game, prepare for a new game
+        gameId = -1; // Indicates a new game should be created
+        currentStep = 1;
+        
+        // Calculate required payment
+        requiredPayment = (playerGameCountMod == 0) ? SESSION_COST : 0;
+        
+        return (gameId, requiredPayment, currentStep, remainingGames);
     }
 }
