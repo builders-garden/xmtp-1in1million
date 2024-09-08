@@ -77,7 +77,7 @@ export function GamesTable({ columns, data, defaultPageSize }: DataTableProps) {
   }
 
   return (
-    <div className="rounded-md border">
+    <div className="rounded-xl border">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -117,7 +117,7 @@ export function GamesTable({ columns, data, defaultPageSize }: DataTableProps) {
       </Table>
       <div className="flex items-center justify-between px-4 py-1">
         <div className="flex items-center space-x-6 lg:space-x-8">
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 py-1">
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -127,7 +127,7 @@ export function GamesTable({ columns, data, defaultPageSize }: DataTableProps) {
                       table.setPageSize(Number(value));
                     }}
                   >
-                    <SelectTrigger className="h-8 w-[70px]">
+                    <SelectTrigger className="h-8 w-[70px] rounded-xl">
                       <SelectValue
                         placeholder={table.getState().pagination.pageSize}
                       />
@@ -153,7 +153,7 @@ export function GamesTable({ columns, data, defaultPageSize }: DataTableProps) {
           </div>
           <div className="flex items-center space-x-2">
             <Button
-              className="hidden h-8 w-8 p-0 lg:flex"
+              className="hidden h-8 w-8 p-0 lg:flex rounded-xl"
               onClick={() => table.setPageIndex(0)}
               disabled={!table.getCanPreviousPage()}
             >
@@ -161,7 +161,7 @@ export function GamesTable({ columns, data, defaultPageSize }: DataTableProps) {
               <ChevronsLeft className="h-4 w-4" />
             </Button>
             <Button
-              className="h-8 w-8 p-0"
+              className="h-8 w-8 p-0 rounded-xl"
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
             >
@@ -169,7 +169,7 @@ export function GamesTable({ columns, data, defaultPageSize }: DataTableProps) {
               <ChevronLeft className="h-4 w-4" />
             </Button>
             <Button
-              className="h-8 w-8 p-0"
+              className="h-8 w-8 p-0 rounded-xl"
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
             >
@@ -177,7 +177,7 @@ export function GamesTable({ columns, data, defaultPageSize }: DataTableProps) {
               <ChevronRight className="h-4 w-4" />
             </Button>
             <Button
-              className="hidden h-8 w-8 p-0 lg:flex"
+              className="hidden h-8 w-8 p-0 lg:flex rounded-xl"
               onClick={() => table.setPageIndex(table.getPageCount() - 1)}
               disabled={!table.getCanNextPage()}
             >

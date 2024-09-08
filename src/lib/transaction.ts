@@ -19,11 +19,17 @@ import {
 
 const publicClient = createPublicClient({
   chain: sepolia,
-  transport: http(),
+  transport: http("https://ethereum-sepolia-rpc.publicnode.com"),
 });
 
-export const CONTRACT_ADDRESS = "0xBC32487413e6bff8fE784Eef74d4029f8033092c";
+export const CONTRACT_ADDRESS = "0x5f91D34dCdFfaF3Ce0f3Fa8A5BA35D4e1eFF8780";
 
+export async function getWaitTransactionReceipt(txHash: `0x${string}`) {
+  // const publicClient = getPublicClient(chain);
+  return await publicClient.waitForTransactionReceipt({
+    hash: txHash,
+  });
+}
 export async function getTransactionReceipt(txHash: `0x${string}`) {
   // const publicClient = getPublicClient(chain);
   return await publicClient.getTransactionReceipt({
@@ -89,21 +95,8 @@ const getAllPlayers = async (): Promise<PlayerMerged[]> => {
 
   const mergedPlayers = await Promise.all(
     addresses.map(async (address, index) => {
-      let farcasterUserData = null;
-      try {
-        farcasterUserData = await getFarcasterUserByAddress(address);
-      } catch (error) {
-        console.error("Farcaster user not found for address:", address);
-        farcasterUserData = {
-          fid: -1,
-          displayName: "Unknown",
-          username: address,
-          pfp: "https://placehold.co/100x100",
-        } as FarcasterUser;
-      }
       return {
         address,
-        farcasterUser: farcasterUserData,
         stats: stats[index],
         gamesPlayed: gamesPlayed[index] || [],
       } as PlayerMerged;
@@ -117,10 +110,37 @@ const getLeaderboard = async (): Promise<PlayerMerged[]> => {
   const players = await getAllPlayers();
 
   // Create a map of players by address for efficient lookup
-  const playerMap = new Map(players.map((player) => [player.address, player]));
+  const tmpPlayerMap = new Map(
+    players.map((player) => [player.address, player])
+  );
+
+  const playerMap = await Promise.all(
+    Array.from(tmpPlayerMap.values()).map(async (player) => {
+      let farcasterUserData = null;
+      try {
+        farcasterUserData = await getFarcasterUserByAddress(
+          player.address as `0x${string}`
+        );
+      } catch (error) {
+        console.error("Farcaster user not found for address:", player.address);
+        farcasterUserData = {
+          fid: -1,
+          displayName: "Unknown",
+          username: player.address,
+          pfp: "https://placehold.co/100x100",
+        } as FarcasterUser;
+      }
+      return {
+        address: player.address,
+        stats: player.stats,
+        gamesPlayed: player.gamesPlayed,
+        farcasterUser: farcasterUserData,
+      } as PlayerMerged;
+    })
+  );
 
   // Merge players with the same address and sort by bestRound
-  const mergedPlayers = Array.from(playerMap.values()).sort(
+  const mergedPlayers = playerMap.sort(
     (a, b) => Number(b.stats.bestRound) - Number(a.stats.bestRound)
   );
 

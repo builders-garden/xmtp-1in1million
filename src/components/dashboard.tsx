@@ -120,10 +120,9 @@ function Dashboard() {
   console.log({ transformedUserGames, leaderboard });
 
   return (
-    <div className="container">
-      <div className="flex flex-col gap-12 items-start justify-center p-4 bg-slate-100">
-        <div className="w-full">
-          <h2 className="text-2xl font-bold mb-4">Leaderboard</h2>
+    <div className="container flex flex-col gap-16 items-start justify-center p-4">
+      <div className="w-full">
+        <h2 className="text-2xl font-bold mb-4">Leaderboard</h2>
           {leaderboardLoading ? (
             <p>Loading leaderboard...</p>
           ) : leaderboard && leaderboard.length > 0 ? (
@@ -152,17 +151,17 @@ function Dashboard() {
             )}
           </div>
         ) : (
-          <>
-            <h2 className="text-2xl font-bold">To see your games, login</h2>
+          // align left
+          <div className="flex flex-col gap-4 items-start">
+            <h2 className="text-2xl font-bold">To see your games, login.</h2>
             <button
               onClick={login}
-              className="px-4 py-2 bg-blue-500 rounded hover:bg-blue-600 text-white"
+              className="px-4 py-2 bg-indigo-600 rounded hover:bg-indigo-700 text-white transition-all duration-300"
             >
               Login
             </button>
-          </>
+          </div>
         )}
-      </div>
     </div>
   );
 }

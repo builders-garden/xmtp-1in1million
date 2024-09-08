@@ -89,7 +89,7 @@ export const columns: ColumnDef<GameMerged>[] = [
                   <Link
                     href={`https://sepolia.etherscan.io/address/${game.player}`}
                     target="_blank"
-                    className="text-blue-500 hover:underline text-sm"
+                    className="text-indigo-600 hover:underline text-sm"
                   >
                     {`${game.player.slice(0, 6)}...${game.player.slice(-4)}`}
                   </Link>
@@ -110,6 +110,7 @@ export const columns: ColumnDef<GameMerged>[] = [
     header: ({ column }) => (
       <Button
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="rounded-xl"
       >
         Current Step
         <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -140,11 +141,13 @@ export const columns: ColumnDef<GameMerged>[] = [
       return (
         <Accordion type="single" collapsible className="">
           <AccordionItem value="steps">
-            <AccordionTrigger>View Steps</AccordionTrigger>
+            <AccordionTrigger className="w-[100px]">
+              View Steps
+            </AccordionTrigger>
             <AccordionContent>
-              <ol className="list-decimal list-inside pl-4 text-black">
+              <ol className="list-decimal list-inside pl-4 text-black w-[100px]">
                 {game.steps.map((step, index) => (
-                  <li key={index} className="py-1 flex items-center">
+                  <li key={index} className="py-1 flex items-center text-white">
                     <span className="font-bold">{index + 1}.</span>
                     {step.result ? (
                       <Check size={28} color="#00ff00" />
