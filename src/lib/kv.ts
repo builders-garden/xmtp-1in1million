@@ -12,6 +12,7 @@ export const storeGameResultObject = async (
   gameId?: string
 ) => {
   await kv.set(`request/${id}`, {
+    createdAt: new Date().toISOString(),
     status,
     error,
     contractMove,
@@ -35,6 +36,7 @@ export const getGameResultObject = async (
   stepResult?: boolean;
   playerReward?: string; // how much the player won
   gameId?: string;
+  createdAt?: string;
 } | null> => {
   return await kv.get(`request/${id}`);
 };

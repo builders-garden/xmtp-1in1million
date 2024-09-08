@@ -21,7 +21,7 @@ import {
 
 const publicClient = createPublicClient({
   chain: sepolia,
-  transport: http("https://ethereum-sepolia-rpc.publicnode.com"),
+  transport: http("https://1rpc.io/sepolia"),
 });
 
 export const CONTRACT_ADDRESS = "0x5f91D34dCdFfaF3Ce0f3Fa8A5BA35D4e1eFF8780";
