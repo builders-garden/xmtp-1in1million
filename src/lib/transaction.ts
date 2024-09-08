@@ -1,6 +1,7 @@
 import {
   Abi,
   createPublicClient,
+  formatEther,
   getAddress,
   http,
   parseEventLogs,
@@ -173,6 +174,14 @@ const readLogs = async (receipt: TransactionReceipt) => {
   return logs;
 };
 
+const getContractBalance = async () => {
+  const balance = await publicClient.getBalance({
+    address: CONTRACT_ADDRESS,
+  });
+
+  return formatEther(balance);
+};
+
 export {
   getGame,
   getAllGames,
@@ -180,4 +189,5 @@ export {
   getLeaderboard,
   getSubmitMoveParams,
   readLogs,
+  getContractBalance,
 };
