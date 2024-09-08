@@ -3,9 +3,10 @@ import { Metadata } from "next";
 
 import Navbar from "@/components/navbar";
 import Hero from "@/components/hero";
+import Sponsors from "@/components/sponsors";
 import Dashboard from "@/components/dashboard";
+
 import { appUrl } from "@/lib/utils";
-// import Footer from "@/components/footer";
 
 export const dynamic = "force-dynamic";
 
@@ -23,8 +24,8 @@ export default async function Home() {
     <div className="flex-col flex gap-16 bg-black">
       <Navbar />
       <Hero />
+      <Sponsors />
       <Dashboard />
-      {/* <Footer /> */}
     </div>
   );
 }
