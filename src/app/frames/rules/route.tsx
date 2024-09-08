@@ -90,7 +90,10 @@ const handleRequest = frames(async (ctx) => {
         Back
       </Button>,
       <Button action="link" key="2" target={"https://a-milly.vercel.app"}>
-        Check site
+        Check site 🔎
+      </Button>,
+      <Button action="link" key="2" target={"https://builders.garden"}>
+        Builders Garden 🌳
       </Button>,
     ],
   };

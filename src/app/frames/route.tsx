@@ -1,5 +1,6 @@
 import { Button } from "frames.js/next";
 import { frames } from "@/app/frames/frames";
+import { CheScoppiatiTag } from "./components/che-scoppiati-tag";
 
 const handleRequest = frames(async (ctx) => {
   return {
@@ -30,6 +31,7 @@ const handleRequest = frames(async (ctx) => {
         </h2>
         <p tw="text-[140px] my-2">🪨 📜 ✂️</p>
         <p tw="text-[40px] my-2">Let the game begin!</p>
+        <CheScoppiatiTag />
       </div>
     ),
     imageOptions: {
