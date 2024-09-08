@@ -15,6 +15,8 @@ Key Features:
 - Prize pool that grows with each play;
 - Tiered reward system for reaching milestones (6, 9, and 13 wins);
 
+You can find the demo video [here](https://youtu.be/GNFNrhv3T9k).
+
 ## Setup
 
 1. Clone the repository:
