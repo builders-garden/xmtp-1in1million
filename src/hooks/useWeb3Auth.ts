@@ -16,7 +16,7 @@ import {
 import { Web3Auth } from "@web3auth/modal";
 import RPC from "@/lib/viem-rpc";
 
-// get from https://dashboard.web3auth.io
+// get from http\s://dashboard.web3auth.io
 const clientId =
   "BI7Z48zXwRKRUZ_u5W-NoVFayLcHtCNuSWCsxEeBUSMe08PoI6CY01Xy9hbs8-qLNlSgeOl6ES_YTtZgzWJlkq4";
 
@@ -50,6 +50,7 @@ const web3auth = new Web3Auth({
   uiConfig: {
     loginMethodsOrder: ["farcaster", "google", "apple"],
     primaryButton: "socialLogin",
+    mode: "dark",
   },
 });
 

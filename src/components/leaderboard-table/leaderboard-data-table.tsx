@@ -101,8 +101,8 @@ export function LeaderboardTable<TData, TValue>({
   }
 
   return (
-    <div className="max-w-xs sm:max-w-[100%]">
-      <div className="flex flex-col justify-between gap-1 py-4 sm:flex-row sm:items-center">
+    <div className="flex flex-col gap-1">
+      <div className="flex flex-col justify-between gap-1 py-1 sm:flex-row sm:items-center">
         <Input
           placeholder="Filter by player name..."
           value={
@@ -115,10 +115,10 @@ export function LeaderboardTable<TData, TValue>({
               .getColumn("farcasterUser.displayName")
               ?.setFilterValue(event.target.value);
           }}
-          className="max-w-sm"
+          className="max-w-sm rounded-xl"
         />
       </div>
-      <div className="rounded-md border">
+      <div className="rounded-xl border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -180,7 +180,7 @@ export function LeaderboardTable<TData, TValue>({
                       }}
                       defaultValue={defaultPageSize.toString()}
                     >
-                      <SelectTrigger className="h-8 w-[70px]">
+                      <SelectTrigger className="h-8 w-[70px] rounded-xl">
                         <SelectValue
                           placeholder={table.getState().pagination.pageSize}
                         />
@@ -204,9 +204,9 @@ export function LeaderboardTable<TData, TValue>({
               Page {table.getState().pagination.pageIndex + 1} of{" "}
               {table.getPageCount()}
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 py-1">
               <Button
-                className="hidden h-8 w-8 p-0 lg:flex"
+                className="hidden h-8 w-8 p-0 lg:flex rounded-xl"
                 onClick={() => table.setPageIndex(0)}
                 disabled={!table.getCanPreviousPage()}
               >
@@ -214,7 +214,7 @@ export function LeaderboardTable<TData, TValue>({
                 <ChevronsLeft className="h-4 w-4" />
               </Button>
               <Button
-                className="h-8 w-8 p-0"
+                className="h-8 w-8 p-0 rounded-xl"
                 onClick={() => table.previousPage()}
                 disabled={!table.getCanPreviousPage()}
               >
@@ -222,7 +222,7 @@ export function LeaderboardTable<TData, TValue>({
                 <ChevronLeft className="h-4 w-4" />
               </Button>
               <Button
-                className="h-8 w-8 p-0"
+                className="h-8 w-8 p-0 rounded-xl"
                 onClick={() => table.nextPage()}
                 disabled={!table.getCanNextPage()}
               >
@@ -230,7 +230,7 @@ export function LeaderboardTable<TData, TValue>({
                 <ChevronRight className="h-4 w-4" />
               </Button>
               <Button
-                className="hidden h-8 w-8 p-0 lg:flex"
+                className="hidden h-8 w-8 p-0 lg:flex rounded-xl"
                 onClick={() => table.setPageIndex(table.getPageCount() - 1)}
                 disabled={!table.getCanNextPage()}
               >

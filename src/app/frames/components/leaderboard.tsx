@@ -7,7 +7,7 @@ interface LeaderboardProps {
 
 const Leaderboard = ({ leaderboardUsers }: LeaderboardProps) => {
   return (
-    <div tw="flex flex-col justify-center w-[850px] bg-orange-300 rounded-3xl p-[30px]">
+    <div tw="flex flex-col justify-center w-[850px] bg-amber-100 border-2 border-amber-600 rounded-3xl p-[30px]">
       <div
         style={{
           fontFamily: "BRSonoma-Bold",
@@ -34,7 +34,7 @@ const Leaderboard = ({ leaderboardUsers }: LeaderboardProps) => {
           Best Round
         </p>
       </div>
-      <hr tw="w-full h-1 bg-black my-4" />
+      <hr tw="w-full h-[1px] bg-amber-600 my-4" />
       {leaderboardUsers.map((user, index) => (
         <LeaderboardRow key={index} player={user} />
       ))}

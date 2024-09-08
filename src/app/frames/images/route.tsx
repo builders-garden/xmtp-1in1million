@@ -27,7 +27,7 @@ const sonomaBoldFontData = fs.readFileSync(
 const imagesWorker = createImagesWorker({
   secret: "MY_VERY_SECRET_SECRET",
   imageOptions: {
-    debug: true,
+    debug: false,
     sizes: {
       "1:1": {
         width: 1080,

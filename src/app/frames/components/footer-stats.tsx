@@ -1,20 +1,22 @@
+import { formatEther } from "viem";
+
 interface FooterStatsProps {
-  perc_winning: number;
-  // wins_to_next_reward: number;
   remaining_games: number;
+  requiredPayment: number;
 }
 
 const FooterStats = ({
-  perc_winning,
-  // wins_to_next_reward,
   remaining_games,
+  requiredPayment,
 }: FooterStatsProps) => {
   return (
     <div tw="flex w-full h-[78px] absolute bottom-[15px] items-center justify-between">
-      {/* <p tw="text-[30px]">% of winning: {perc_winning}%</p> */}
-      {/* <p tw="text-[30px]">Wins to the next reward: {wins_to_next_reward}</p> */}
-      <p tw="text-[30px]">Remaining games: {remaining_games}</p>
-      <p tw="text-[30px]">You are going to pay</p>
+      <p tw="text-[30px]">Remaining Games: {remaining_games}</p>
+      {requiredPayment > 0 && (
+        <p tw="text-[30px]">
+          You are going to pay {formatEther(BigInt(requiredPayment))} ETH
+        </p>
+      )}
     </div>
   );
 };

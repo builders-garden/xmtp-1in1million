@@ -18,25 +18,20 @@ export const POST = frames(async (ctx) => {
 
   const userMove = ctx.url.searchParams.get("move");
   const gameId = ctx.url.searchParams.get("gameId");
-  const currentStep = ctx.url.searchParams.get("currentStep");
   const requiredPayment = ctx.url.searchParams.get("requiredPayment");
   console.log({
     userMove,
     gameId,
-    currentStep,
     requiredPayment,
   });
 
+  // Validation
   if (gameId == null) {
     throw new Error("Invalid game id");
   }
 
   if (requiredPayment == null) {
     throw new Error("Invalid payment");
-  }
-
-  if (currentStep == null) {
-    throw new Error("Invalid game step");
   }
 
   // check if userMove is valid
@@ -53,12 +48,6 @@ export const POST = frames(async (ctx) => {
     functionName: "submitMove",
     args: [BigInt(gameId), userMoveNumber],
   });
-
-  console.log(
-    "Amount to pay test:",
-    requiredPayment,
-    parseEther("0.001").toString()
-  );
 
   return transaction({
     chainId: `eip155:${sepolia.id}`,

@@ -53,15 +53,15 @@ export const columns: ColumnDef<PlayerMerged>[] = [
                     target="_blank"
                     className="text-sm hover:underline"
                   >
-                    {player.farcasterUser.username.length > 14
-                      ? `@${player.farcasterUser.username.slice(0, 10)}...`
+                    {player.farcasterUser.username?.length > 14
+                      ? `@${player.farcasterUser.username?.slice(0, 10)}...`
                       : `@${player.farcasterUser.username}`}
                   </Link>
                 ) : (
                   <Link
                     href={`https://sepolia.etherscan.io/address/${row.original.address}`}
                     target="_blank"
-                    className="text-blue-500 hover:underline text-sm"
+                    className="text-indigo-600 hover:underline text-sm"
                   >
                     {`${row.original.address.slice(0, 6)}...${row.original.address.slice(-4)}`}
                   </Link>
@@ -82,6 +82,7 @@ export const columns: ColumnDef<PlayerMerged>[] = [
     header: ({ column }) => (
       <Button
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="rounded-xl text-white"
       >
         Best Round
         <ArrowUpDown className="ml-2 h-4 w-4" />
