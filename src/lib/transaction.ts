@@ -83,6 +83,10 @@ const getAllGames = async (): Promise<GameMerged[]> => {
     })
   );
 
+  const sortedGames = mergedGames.sort(
+    (a, b) => Number(b.currentStep) - Number(a.currentStep)
+  );
+
   return mergedGames;
 };
 
