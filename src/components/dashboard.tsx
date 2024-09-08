@@ -165,7 +165,7 @@ function Dashboard() {
           <h2 className="text-3xl font-bagel">To see your games, login.</h2>
           <button
             onClick={login}
-            className="px-4 py-2 bg-indigo-600 rounded hover:bg-indigo-700 text-white transition-all duration-300"
+            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 transition duration-200 rounded-xl text-white shadow-[0px_2px_0px_0px_#FFFFFF40_inset]"
           >
             Login
           </button>
