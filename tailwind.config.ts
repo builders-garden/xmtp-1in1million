@@ -84,8 +84,8 @@ const config = {
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],
         heading: ["var(--font-heading)", ...fontFamily.sans],
-        brsonoma: ["var(--font-brsonoma)", "sans-serif"],
-        bagel: ["var(--font-bagel)", "sans-serif"],
+        'brsonoma': ['BRSonoma', 'sans-serif'],
+        'bagel': ['BagelFatOne', 'sans-serif'],
       },
     },
   },
