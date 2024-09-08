@@ -65,6 +65,7 @@ export function GamesTable({ columns, data, defaultPageSize }: DataTableProps) {
       pagination: {
         pageSize: defaultPageSize,
       },
+      sorting: [{ id: "stats.currentStep", desc: true }],
     },
   });
 
