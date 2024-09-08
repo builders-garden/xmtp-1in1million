@@ -64,6 +64,9 @@ const handleRequest = frames(async (ctx) => {
       <Button action="post" target={"/"}>
         Home
       </Button>,
+      <Button action="post" target={"/rules"}>
+        Rules & Info
+      </Button>,
       <Button action="post" target={"/play"}>
         Play
       </Button>,
