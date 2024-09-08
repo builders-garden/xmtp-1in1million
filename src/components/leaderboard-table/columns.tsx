@@ -84,11 +84,11 @@ export const columns: ColumnDef<PlayerMerged>[] = [
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         className="rounded-xl text-white"
       >
-        Best Round
+        Best Win Streak
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
-    cell: ({ row }) => row.original.stats.bestRound,
+    cell: ({ row }) => row.original.stats.bestRound - 1,
   },
   {
     accessorKey: "stats.gamesWon",
@@ -99,11 +99,6 @@ export const columns: ColumnDef<PlayerMerged>[] = [
     accessorKey: "stats.gamesLost",
     header: "Games Lost",
     cell: ({ row }) => row.original.stats.gamesLost.toString(),
-  },
-  {
-    accessorKey: "gamesPlayed",
-    header: "Total Games",
-    cell: ({ row }) => row.original.gamesPlayed.length,
   },
   {
     accessorKey: "stats.totalSpent",

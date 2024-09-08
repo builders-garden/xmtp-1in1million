@@ -52,75 +52,8 @@ const renderMoveIcon = (move: string) => {
 
 export const columns: ColumnDef<GameMerged>[] = [
   {
-    accessorKey: "player",
-    header: "Player",
-    cell: ({ row }) => {
-      const game = row.original;
-      return (
-        <div className="flex items-center space-x-2">
-          {game.farcasterUser ? (
-            <>
-              {game.farcasterUser.fid === -1 ? (
-                <DefaultUserIcon />
-              ) : (
-                <Image
-                  src={game.farcasterUser.pfp}
-                  alt={game.farcasterUser.displayName}
-                  width={32}
-                  height={32}
-                  className="rounded-full object-cover"
-                />
-              )}
-              <div>
-                <div className="font-medium">
-                  {game.farcasterUser.displayName}
-                </div>
-                {game.farcasterUser.fid !== -1 ? (
-                  <Link
-                    href={`https://warpcast.com/${game.farcasterUser.username}`}
-                    target="_blank"
-                    className="text-sm hover:underline"
-                  >
-                    {game.farcasterUser.username.length > 14
-                      ? `@${game.farcasterUser.username.slice(0, 10)}...`
-                      : `@${game.farcasterUser.username}`}
-                  </Link>
-                ) : (
-                  <Link
-                    href={`https://sepolia.etherscan.io/address/${game.player}`}
-                    target="_blank"
-                    className="text-indigo-600 hover:underline text-sm"
-                  >
-                    {`${game.player.slice(0, 6)}...${game.player.slice(-4)}`}
-                  </Link>
-                )}
-              </div>
-            </>
-          ) : (
-            <div className="font-medium">
-              {`${game.player.slice(0, 6)}...${game.player.slice(-4)}`}
-            </div>
-          )}
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "currentStep",
-    header: ({ column }) => (
-      <Button
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="rounded-xl"
-      >
-        Current Step
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-    cell: ({ row }) => row.original.currentStep,
-  },
-  {
     accessorKey: "state",
-    header: "State",
+    header: "Game Result",
     cell: ({ row }) => {
       const game = row.original;
       switch (game.state.toString()) {
@@ -134,6 +67,19 @@ export const columns: ColumnDef<GameMerged>[] = [
     },
   },
   {
+    accessorKey: "currentStep",
+    header: ({ column }) => (
+      <Button
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="rounded-xl text-white"
+      >
+        Win Streak
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: ({ row }) => row.original.currentStep - 2,
+  },
+  {
     accessorKey: "Steps",
     header: "Steps",
     cell: ({ row }) => {
@@ -141,19 +87,24 @@ export const columns: ColumnDef<GameMerged>[] = [
       return (
         <Accordion type="single" collapsible className="">
           <AccordionItem value="steps">
-            <AccordionTrigger className="w-[100px]">
+            <AccordionTrigger className="w-[150px]">
               View Steps
             </AccordionTrigger>
             <AccordionContent>
-              <ol className="list-decimal list-inside pl-4 text-black w-[100px]">
+              <ol className="list-decimal list-inside pl-4 text-black w-[150px]">
                 {game.steps.map((step, index) => (
-                  <li key={index} className="py-1 flex items-center text-white">
-                    <span className="font-bold">{index + 1}.</span>
-                    {step.result ? (
-                      <Check size={28} color="#00ff00" />
-                    ) : (
-                      <X size={28} color="#ff0000" />
-                    )}
+                  <li
+                    key={index}
+                    className="py-1 flex gap-1 items-center text-white w-fit"
+                  >
+                    <span className="flex font-bold">{index + 1}.</span>
+                    <span className="font-bold">
+                      {step.result ? (
+                        <Check size={28} color="#00ff00" fontSize={6} />
+                      ) : (
+                        <X size={28} color="#ff0000" fontSize={6} />
+                      )}
+                    </span>
                     Player: {renderMoveIcon(step.playerMove)}
                     Contract: {renderMoveIcon(step.contractMove)}
                   </li>

@@ -5,7 +5,9 @@ import Navbar from "@/components/navbar";
 import Hero from "@/components/hero";
 import Dashboard from "@/components/dashboard";
 import { appUrl } from "@/lib/utils";
-import Footer from "@/components/footer";
+// import Footer from "@/components/footer";
+
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -22,7 +24,7 @@ export default async function Home() {
       <Navbar />
       <Hero />
       <Dashboard />
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }

@@ -3,6 +3,7 @@
 import { useWeb3AuthContext } from "@/hooks/web3auth-context";
 import { LogOutIcon } from "lucide-react";
 import React from "react";
+import Image from 'next/image';
 
 function Navbar() {
   const { user, loggedIn, login, logout } = useWeb3AuthContext();
@@ -12,7 +13,10 @@ function Navbar() {
       <nav className="flex items-center justify-between p-4">
         {loggedIn ? (
           <>
-            <h2 className="text-4xl font-bagel">1 in 1 Million</h2>
+            <div className="flex items-center gap-8">
+              <Image src="/images/logo.png" alt="Logo" width={40} height={40} />
+              <h2 className="text-4xl font-bagel">Milionario</h2>
+            </div>
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
                 {user?.profileImage && (
@@ -37,7 +41,10 @@ function Navbar() {
           </>
         ) : (
           <>
-            <h2 className="text-4xl font-bagel">1 in 1 Million</h2>
+            <div className="flex items-center gap-1">
+              <Image src="/images/logo.png" alt="Logo" width={40} height={40} className="mr-2" />
+              <h2 className="text-4xl font-bagel">Milionario</h2>
+            </div>
             <button
               onClick={login}
               className="px-4 py-2 bg-indigo-600 rounded hover:bg-indigo-700 text-white"

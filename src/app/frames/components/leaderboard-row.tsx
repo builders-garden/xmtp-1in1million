@@ -26,7 +26,7 @@ const LeaderboardRow = ({ player }: LeaderboardRowProps) => {
         {pfp ? (
           <img
             src={pfp}
-            tw="w-[12px] h-[12px]"
+            tw="w-[48px] h-[48px]"
             style={{ objectFit: "cover", borderRadius: "50%" }}
           />
         ) : (

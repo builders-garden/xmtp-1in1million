@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getAllGames } from "@/lib/transaction";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     const games = await getAllGames();

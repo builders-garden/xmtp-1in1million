@@ -10,6 +10,7 @@ import {
   columns as leaderboardColumns,
 } from "@/components/leaderboard-table";
 import { GamesTable, columns as gamesColumns } from "@/components/games-table";
+import { getAddress } from "viem";
 
 const fetchUserAddresses = async (fid: number): Promise<`0x${string}`[]> => {
   try {
@@ -93,7 +94,9 @@ function Dashboard() {
     ) {
       return games
         .filter((game) =>
-          farcasterUserAddresses.includes(game.player as `0x${string}`)
+          farcasterUserAddresses.includes(
+            game.player.toLowerCase() as `0x${string}`
+          )
         )
         .map((game) => ({
           ...game,
@@ -111,57 +114,63 @@ function Dashboard() {
     }
     return [] as GameMerged[];
   }, [
+    userFid,
     gamesFetched,
     farcasterUserAddressesFetched,
     games,
     farcasterUserAddresses,
   ]);
 
-  console.log({ transformedUserGames, leaderboard });
+  console.log({
+    userFid,
+    farcasterUserAddresses,
+    transformedUserGames,
+    leaderboard,
+  });
 
   return (
-    <div className="container flex flex-col gap-16 items-start justify-center p-4">
+    <div className="container flex flex-col gap-16 items-start justify-center p-4 pb-24">
       <div className="w-full">
         <h2 className="text-4xl mb-4 font-bagel">Leaderboard</h2>
-          {leaderboardLoading ? (
-            <p>Loading leaderboard...</p>
-          ) : leaderboard && leaderboard.length > 0 ? (
-            <LeaderboardTable
-              columns={leaderboardColumns}
-              data={leaderboard}
+        {leaderboardLoading ? (
+          <p>Loading leaderboard...</p>
+        ) : leaderboard && leaderboard.length > 0 ? (
+          <LeaderboardTable
+            columns={leaderboardColumns}
+            data={leaderboard}
+            defaultPageSize={10}
+          />
+        ) : (
+          <p>The leaderboard is empty.</p>
+        )}
+      </div>
+      {loggedIn ? (
+        <div className="w-full">
+          <h2 className="text-4xl mb-4 font-bagel">Your games</h2>
+          {gamesLoading ? (
+            <p>Loading your games...</p>
+          ) : transformedUserGames && transformedUserGames.length > 0 ? (
+            <GamesTable
+              columns={gamesColumns}
+              data={transformedUserGames}
               defaultPageSize={10}
             />
           ) : (
-            <p>The leaderboard is empty.</p>
+            <p>You don't have any games yet.</p>
           )}
         </div>
-        {loggedIn ? (
-          <div className="w-full">
-            <h2 className="text-2xl font-bold mb-4">Your games</h2>
-            {gamesLoading ? (
-              <p>Loading your games...</p>
-            ) : transformedUserGames && transformedUserGames.length > 0 ? (
-              <GamesTable
-                columns={gamesColumns}
-                data={transformedUserGames}
-                defaultPageSize={10}
-              />
-            ) : (
-              <p>You don't have any games yet.</p>
-            )}
-          </div>
-        ) : (
-          // align left
-          <div className="flex flex-col gap-6 items-start">
-            <h2 className="text-3xl font-bagel">To see your games, login.</h2>
-            <button
-              onClick={login}
-              className="px-4 py-2 bg-indigo-600 rounded hover:bg-indigo-700 text-white transition-all duration-300"
-            >
-              Login
-            </button>
-          </div>
-        )}
+      ) : (
+        // align left
+        <div className="flex flex-col gap-6 items-start">
+          <h2 className="text-3xl font-bagel">To see your games, login.</h2>
+          <button
+            onClick={login}
+            className="px-4 py-2 bg-indigo-600 rounded hover:bg-indigo-700 text-white transition-all duration-300"
+          >
+            Login
+          </button>
+        </div>
+      )}
     </div>
   );
 }

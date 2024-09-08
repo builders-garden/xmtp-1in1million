@@ -39,9 +39,6 @@ const handleRequest = frames(async (ctx) => {
       <Button action="link" target={"https://a-milly.vercel.app"}>
         Check the Pool
       </Button>,
-      <Button action="post" target={"/rules"}>
-        Rules & Info
-      </Button>,
       <Button action="post" target={"/leaderboard"}>
         Leaderboard
       </Button>,
