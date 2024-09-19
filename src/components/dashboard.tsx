@@ -10,7 +10,6 @@ import {
   columns as leaderboardColumns,
 } from "@/components/leaderboard-table";
 import { GamesTable, columns as gamesColumns } from "@/components/games-table";
-import { getAddress } from "viem";
 
 const fetchUserAddresses = async (fid: number): Promise<`0x${string}`[]> => {
   try {
@@ -27,7 +26,9 @@ const fetchUserAddresses = async (fid: number): Promise<`0x${string}`[]> => {
 
 const fetchAllGames = async (): Promise<GameMerged[]> => {
   try {
-    const games = await fetch("/api/games")
+    const games = await fetch("/api/games", {
+      cache: "no-cache",
+    })
       .then((res) => res.json())
       .then((data) => JSON.parse(data.games));
 
@@ -40,7 +41,9 @@ const fetchAllGames = async (): Promise<GameMerged[]> => {
 
 const fetchLeaderboard = async (): Promise<PlayerMerged[]> => {
   try {
-    const data = await fetch("/api/leaderboard")
+    const data = await fetch("/api/leaderboard", {
+      cache: "no-cache",
+    })
       .then((res) => res.json())
       .then((data) => JSON.parse(data.leaderboard));
     return data as PlayerMerged[];
@@ -67,7 +70,7 @@ function Dashboard() {
     isLoading: leaderboardLoading,
     isFetched: leaderboardFetched,
   } = useQuery({
-    queryKey: ["getLeaderboard"],
+    queryKey: ["getLeaderboard", userFid],
     queryFn: fetchLeaderboard,
   });
 
@@ -121,15 +124,8 @@ function Dashboard() {
     farcasterUserAddresses,
   ]);
 
-  console.log({
-    userFid,
-    farcasterUserAddresses,
-    transformedUserGames,
-    leaderboard,
-  });
-
   return (
-    <div className="container flex flex-col gap-16 items-start justify-center p-4 pb-24">
+    <div className="sm:container flex flex-col gap-16 items-start justify-center p-5 sm:p-10 pb-24">
       <div className="w-full">
         <h2 className="text-4xl mb-4 font-bagel">Leaderboard</h2>
         {leaderboardLoading ? (

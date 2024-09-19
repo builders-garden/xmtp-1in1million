@@ -106,15 +106,11 @@ export function LeaderboardTable<TData, TValue>({
         <Input
           placeholder="Filter by player name..."
           value={
-            (table
-              .getColumn("farcasterUser.displayName")
-              ?.getFilterValue() as string) ?? ""
+            (table.getColumn("farcasterUser")?.getFilterValue() as string) ?? ""
           }
-          onChange={(event) => {
-            return table
-              .getColumn("farcasterUser.displayName")
-              ?.setFilterValue(event.target.value);
-          }}
+          onChange={(event) =>
+            table.getColumn("farcasterUser")?.setFilterValue(event.target.value)
+          }
           className="max-w-sm rounded-xl"
         />
       </div>

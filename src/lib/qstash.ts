@@ -7,12 +7,16 @@ const qstashClient = new Client({
 });
 
 export async function createNewGameResultTask(id: string) {
-  console.log("AAAAAA - app url", `${appUrl()}/api/game-result-worker`);
+  console.log(
+    "create new game result task - app url",
+    `${appUrl()}/api/game-result-worker`,
+    id
+  );
   const result = await qstashClient.publishJSON({
     url: `${appUrl()}/api/game-result-worker`,
     body: {
       id,
     },
   });
-  console.log("Task created:", result);
+  console.log(`create new game result task - task ${id} created:`, result);
 }

@@ -1,68 +1,40 @@
 import React from "react";
-import { FloatingDock } from "@/components/ui/floating-dock";
 import {
-  IconBrandGithub,
   IconBrandX,
-  IconExchange,
-  IconHome,
-  IconNewSection,
-  IconTerminal2,
+  IconLink,
+  IconBrandGithub,
+  IconBrandYoutube,
+  IconMessageCirclePlus,
 } from "@tabler/icons-react";
-import Image from "next/image";
+import { FloatingDock } from "./ui/floating-dock";
 
 const Footer = () => {
   const links = [
     {
-      title: "Home",
-      icon: (
-        <IconHome className="h-full w-full text-indigo-300" />
-      ),
-      href: "#",
+      title: "XMTP Bot: Send DM",
+      icon: <IconMessageCirclePlus className="h-full w-full text-indigo-300" />,
+      href: "https://converse.xyz/dm/a-milly.eth",
     },
 
     {
-      title: "Products",
-      icon: (
-        <IconTerminal2 className="h-full w-full text-indigo-300" />
-      ),
-      href: "#",
+      title: "Github",
+      icon: <IconBrandGithub className="h-full w-full text-indigo-300" />,
+      href: "https://github.com/builders-garden/xmtp-1in1million",
     },
     {
-      title: "Components",
-      icon: (
-        <IconNewSection className="h-full w-full text-indigo-300" />
-      ),
-      href: "#",
+      title: "YouTube",
+      icon: <IconBrandYoutube className="h-full w-full text-indigo-300" />,
+      href: "https://youtu.be/GNFNrhv3T9k",
     },
     {
-      title: "Changelog",
-      icon: (
-        <IconExchange className="h-full w-full text-indigo-300" />
-      ),
-      href: "#",
-    },
-
-    {
-      title: "Twitter",
-      icon: (
-        <IconBrandX className="h-full w-full text-indigo-300" />
-      ),
-      href: "#",
-    },
-    {
-      title: "GitHub",
-      icon: (
-        <IconBrandGithub className="h-full w-full text-indigo-300" />
-      ),
-      href: "#",
+      title: "Learn More",
+      icon: <IconLink className="h-full w-full text-indigo-300" />,
+      href: "https://ethglobal.com/showcase/milionario-eq7of",
     },
   ];
   return (
-    <div className="flex items-center justify-center h-auto pb-8 w-full">
-      <FloatingDock
-        mobileClassName="translate-y-20" // only for demo, remove for production
-        items={links}
-      />
+    <div className="flex items-center justify-center h-auto py-5 w-full">
+      <FloatingDock items={links} />
     </div>
   );
 };

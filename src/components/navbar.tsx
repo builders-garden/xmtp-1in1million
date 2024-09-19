@@ -9,16 +9,16 @@ function Navbar() {
   const { user, loggedIn, login, logout } = useWeb3AuthContext();
 
   return (
-    <div className="container">
-      <nav className="flex items-center justify-between p-4">
+    <div className="sm:container px-2 py-4 md:px-4">
+      <nav className="flex items-center justify-between ">
         {loggedIn ? (
           <>
-            <div className="flex items-center gap-8">
+            <div className="flex items-center gap-2">
               <Image src="/images/logo.png" alt="Logo" width={40} height={40} />
-              <h2 className="text-4xl font-bagel">Milionario</h2>
+              <h2 className="text-xl sm:text-4xl font-bagel">Milionario</h2>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 sm:gap-4">
+              <div className="flex items-center gap-1 sm:gap-2">
                 {user?.profileImage && (
                   <img
                     src={user.profileImage}
@@ -28,7 +28,7 @@ function Navbar() {
                 )}
                 <div className="flex flex-col gap-0">
                   <span className="font-bold">{user?.name || "User"}</span>
-                  <span className="text-sm">{`FID ${user?.verifierId || "User"}`}</span>
+                  <span className="text-sm">{`FID ${user?.verifierId || ""}`}</span>
                 </div>
               </div>
               <button

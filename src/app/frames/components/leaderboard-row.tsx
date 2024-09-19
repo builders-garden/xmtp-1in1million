@@ -18,7 +18,6 @@ const LeaderboardRow = ({ player }: LeaderboardRowProps) => {
         ? `${player.farcasterUser?.username.slice(0, 6)}...${player.farcasterUser?.username.slice(-4)}`
         : player.farcasterUser?.username
       : `${player.address.slice(0, 6)}...${player.address.slice(-4)}`;
-  console.log("frame leaderboard row", player, username, displayName, pfp);
 
   return (
     <div tw="flex justify-between my-4">
@@ -44,7 +43,7 @@ const LeaderboardRow = ({ player }: LeaderboardRowProps) => {
             />
           </svg>
         )}
-        <div tw="flex flex-col ml-4">
+        <div tw="flex flex-col ml-4 w-[250px]">
           <span
             style={{
               fontFamily: "BRSonoma-Bold",
@@ -59,6 +58,7 @@ const LeaderboardRow = ({ player }: LeaderboardRowProps) => {
         style={{
           display: "flex",
           justifyContent: "flex-end",
+          alignItems: "center",
         }}
         tw="h-[78px] w-[250px] text-[38px] items-center m-0 p-0"
       >

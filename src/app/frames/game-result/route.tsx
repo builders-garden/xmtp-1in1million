@@ -139,22 +139,23 @@ const handleRequest = frames(async (ctx) => {
       result = "win";
     }
 
+    const userAddress = await ctx.walletAddress();
+    let user: UserDataReturnType & { fid: number };
     if (!ctx.message?.requesterFid) {
-      return {
-        image: <div tw="w-full h-full flex bg-white px-4">No FID</div>,
-        imageOptions: {
-          aspectRatio: "1:1",
-        },
-        buttons: [
-          <Button action="post" target={"/"}>
-            Back
-          </Button>,
-        ],
+      user = {
+        displayName: "Unkown",
+        fid: -1,
+        username: userAddress,
+      };
+    } else {
+      const tmp = await getUserDataForFid({
+        fid: ctx.message?.requesterFid,
+      });
+      user = {
+        ...tmp,
+        fid: ctx.message?.requesterFid,
       };
     }
-    const user: UserDataReturnType = await getUserDataForFid({
-      fid: ctx.message?.requesterFid,
-    });
     // POST: Game result is ready, show if the user has won or lost in this step
     return {
       image: (

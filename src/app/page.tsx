@@ -5,6 +5,7 @@ import Navbar from "@/components/navbar";
 import Hero from "@/components/hero";
 import Sponsors from "@/components/sponsors";
 import Dashboard from "@/components/dashboard";
+import Footer from "@/components/footer";
 
 import { appUrl } from "@/lib/utils";
 
@@ -21,11 +22,12 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function Home() {
   return (
-    <div className="flex-col flex gap-16 bg-black">
+    <div className="flex-col flex gap-4 bg-black">
       <Navbar />
       <Hero />
       <Sponsors />
       <Dashboard />
+      <Footer />
     </div>
   );
 }

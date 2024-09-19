@@ -14,7 +14,7 @@ const Leaderboard = ({ leaderboardUsers }: LeaderboardProps) => {
         }}
         tw="flex justify-between text-[38px]"
       >
-        <p tw="h-[48px] w-[300px] m-0 p-0">User</p>
+        <p tw="h-[48px] w-[360px] m-0 p-0">User</p>
         <p
           style={{
             display: "flex",

@@ -5,23 +5,23 @@ import { Leaderboard, UserBanner } from "../components";
 import { getLeaderboard } from "@/lib/transaction";
 
 const handleRequest = frames(async (ctx) => {
+  const userAddress = await ctx.walletAddress();
+  let user: UserDataReturnType & { fid: number };
   if (!ctx.message?.requesterFid) {
-    return {
-      image: <div tw="w-full h-full flex bg-white px-4">No FID</div>,
-      imageOptions: {
-        aspectRatio: "1:1",
-      },
-      buttons: [
-        <Button action="post" target={"/"}>
-          Back
-        </Button>,
-      ],
+    user = {
+      displayName: "Unkown",
+      fid: -1,
+      username: userAddress,
+    };
+  } else {
+    const tmp = await getUserDataForFid({
+      fid: ctx.message?.requesterFid,
+    });
+    user = {
+      ...tmp,
+      fid: ctx.message?.requesterFid,
     };
   }
-
-  const user: UserDataReturnType = await getUserDataForFid({
-    fid: ctx.message?.requesterFid,
-  });
   console.log("User:", user);
 
   const leaderboardData = await getLeaderboard();
@@ -53,12 +53,7 @@ const handleRequest = frames(async (ctx) => {
       aspectRatio: "1:1",
     },
     buttons: [
-      <Button
-        action="link"
-        target={
-          "https://github.com/builders-garden/open-frames-starter-framesjs"
-        }
-      >
+      <Button action="link" target={"https://a-milly.vercel.app"}>
         Check the Pool
       </Button>,
       <Button action="post" target={"/"}>
