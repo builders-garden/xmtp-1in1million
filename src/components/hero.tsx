@@ -41,6 +41,7 @@ const Hero = () => {
               </Link>
               <Link
                 href="https://converse.xyz/dm/a-milly.eth"
+                target="_blank"
                 className="px-2 sm:px-4 py-2 bg-[#F04D23] hover:bg-[#F04D23]/80 transition duration-200 rounded-xl text-white shadow-[0px_2px_0px_0px_#FFFFFF40_inset]"
               >
                 DM Bot

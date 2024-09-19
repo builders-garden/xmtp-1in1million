@@ -27,7 +27,7 @@ const fetchUserAddresses = async (fid: number): Promise<`0x${string}`[]> => {
 const fetchAllGames = async (): Promise<GameMerged[]> => {
   try {
     const games = await fetch("/api/games", {
-      cache: "no-cache",
+      cache: "no-store",
     })
       .then((res) => res.json())
       .then((data) => JSON.parse(data.games));
@@ -42,7 +42,7 @@ const fetchAllGames = async (): Promise<GameMerged[]> => {
 const fetchLeaderboard = async (): Promise<PlayerMerged[]> => {
   try {
     const data = await fetch("/api/leaderboard", {
-      cache: "no-cache",
+      cache: "no-store",
     })
       .then((res) => res.json())
       .then((data) => JSON.parse(data.leaderboard));
